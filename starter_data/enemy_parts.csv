@@ -1,0 +1,3 @@
+id,enemy_id,name,source_id
+wasp_thruster,wasp,Wasp thruster,src_0008
+hornet_thruster,hornet,Hornet thruster,src_0008

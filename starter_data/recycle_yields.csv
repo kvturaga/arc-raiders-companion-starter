@@ -1,0 +1,7 @@
+item_id,output_id,quantity,source_id
+number_plate,metal_parts,3,src_0004
+light_shield,plastic_parts,4,src_0006
+light_impact_grenade,chemicals,1,src_0007
+light_impact_grenade,plastic_parts,1,src_0007
+rusted_tools,metal_parts,8,src_0016
+rusted_tools,steel_springs,1,src_0016

@@ -1,0 +1,10 @@
+id,name,drop_id,weak_point,tactic,source_id
+wasp,Wasp,wasp_driver,Exposed thrusters,Aim at exposed thrusters; destabilization can cause collision damage.,src_0047
+hornet,Hornet,hornet_driver,Unarmored rear thrusters; armored front,Seek a rear angle rather than pouring rounds into front plates.,src_0048
+firefly,Firefly,firefly_burner,Yellow tank exposed when flamethrower deploys; armored thrusters,Fight outside flame range; use cover; do not infer a guaranteed one-shot.,src_0049
+sentinel,Sentinel,sentinel_firing_cores,Small rear yellow capsule on swiveling arm,Peek from cover and break line of sight before converging laser fires.,src_0050
+bombardier,Bombardier,bombardier_cell,Yellow leg joints and rear cylinder,"Use substantial cover; remove Spotters, which respawn; exploit post-artillery window.",src_0051
+bastion,Bastion,bastion_cell,Yellow joints and rear cylinder; exposed rear after cylinder breaks,Use cover and stagger windows; GearIII already complete so cells not current bench bottleneck.,src_0052
+leaper,Leaper,leaper_pulse_unit,Exposed inner sections after armor breaks; significant explosive resistance,Consider sequential Blaze burns and heavy-ammo finishing shots; maintain escape cover.,src_0053
+rocketeer,Rocketeer,rocketeer_driver,Focus two thrusters; unarmored upper thruster surfaces,Engage from substantial cover; no guarantee from generic body shots.,src_0054
+comet,Comet,,,,src_0033

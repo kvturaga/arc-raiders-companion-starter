@@ -1,0 +1,6 @@
+item_id,ammo_id,penetration,listed_damage,magazine,blueprint,handling,source_id
+ferro_i,heavy_ammo,strong,40,1,not_required,Low material cost; reload after every shot; use cover.,src_0042
+anvil_i,heavy_ammo,strong,40,6,confirmed,General-purpose heavy sidearm; precision and reload discipline.,src_0041
+rascal_i,launcher_ammo,very_strong,75,1,confirmed,One projectile then reload; pair with Rattler for players and small targets.,src_0043
+hullcracker_i,launcher_ammo,very_strong,100,5,unknown,Dedicated ARC launcher; acquisition and blueprint unconfirmed; keep a player-defense weapon.,src_0044
+bettina_i,heavy_ammo,strong,16,22,unknown,Full-auto heavy alternative; GunsmithIII required for crafting; blueprint verify.,src_0045

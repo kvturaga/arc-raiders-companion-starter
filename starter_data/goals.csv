@@ -1,0 +1,21 @@
+id,name,status,priority,source_id
+gunsmith_1,Gunsmith I,active,10,starter_workshop
+gunsmith_2,Gunsmith II,active,20,starter_workshop
+gunsmith_3,Gunsmith III,active,30,starter_workshop
+gear_bench_1,Gear Bench I,active,10,starter_workshop
+gear_bench_2,Gear Bench II,active,20,starter_workshop
+gear_bench_3,Gear Bench III,active,30,starter_workshop
+medical_lab_1,Medical Lab I,active,10,starter_workshop
+medical_lab_2,Medical Lab II,active,20,starter_workshop
+medical_lab_3,Medical Lab III,active,30,starter_workshop
+explosives_1,Explosives Station I,active,10,starter_workshop
+explosives_2,Explosives Station II,active,20,starter_workshop
+explosives_3,Explosives Station III,active,30,starter_workshop
+utility_1,Utility Station I,active,10,starter_workshop
+utility_2,Utility Station II,active,20,starter_workshop
+utility_3,Utility Station III,active,30,starter_workshop
+refiner_1,Refiner I,active,10,starter_workshop
+refiner_2,Refiner II,active,20,starter_workshop
+refiner_3,Refiner III,active,30,starter_refiner_iii
+backup_ferro_i,Backup kit: materials for one Ferro I,active,15,src_0042
+backup_rattler_i,Backup kit: materials for one Rattler I,active,15,src_0020

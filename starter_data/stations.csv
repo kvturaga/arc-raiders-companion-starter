@@ -1,0 +1,9 @@
+id,name,level,source_id
+refiner,Refiner,0,starter_workshop
+gunsmith,Gunsmith,0,starter_workshop
+workbench,Workbench,1,starter_workshop
+utility,Utility Station,0,starter_workshop
+recycling,Recycling,0,starter_workshop
+gear_bench,Gear Bench,0,starter_workshop
+explosives,Explosives Station,0,starter_workshop
+medical_lab,Medical Lab,0,starter_workshop

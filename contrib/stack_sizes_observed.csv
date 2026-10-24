@@ -1,0 +1,45 @@
+item_id,name,units_per_slot,observed_on
+arc_data_module,ARC Data Module,3,2026-10-23
+arc_thermal_lining,ARC Thermal Lining,3,2026-10-23
+basic_camera,Basic Camera,1,2026-10-23
+battered_paperbacks,Battered Paperbacks,5,2026-10-23
+binoculars,Binoculars,1,2026-10-23
+bombardier_cell,Bombardier Cell,3,2026-10-23
+bully_fragmenter,Bully Fragmenter,3,2026-10-23
+cable_stripper,Cable Stripper,15,2026-10-23
+complex_gun_parts,Complex Gun Parts,3,2026-10-23
+defibrillator,Defibrillator,3,2026-10-23
+doc_master_s_detector,Dockmaster's Detector,1,2026-10-23
+extended_barrel_i,Extended Barrel I,1,2026-10-23
+extended_barrel_ii,Extended Barrel II,1,2026-10-23
+hand_drill,Hand Drill,3,2026-10-23
+harmonica,Harmonica,1,2026-10-23
+heavy_ammo,Heavy Ammo,60,2026-10-23
+heavy_fuse_grenade,Heavy Fuze Grenade,3,2026-10-23
+light_ammo,Light Ammo,100,2026-10-23
+magnetic_accelerator,Magnetic Accelerator,3,2026-10-23
+mini_pumps,Mini Pumps,5,2026-10-23
+pendola_pass_old_town_key,Pendola Pass Old Town Key,1,2026-10-23
+planks,Planks,50,2026-10-23
+portable_tv,Portable TV,1,2026-10-23
+power_rod,Power Rod,3,2026-10-23
+raider_hatch_key,Raider Hatch Key,1,2026-10-23
+raider_logbooks,Raider Logbooks,5,2026-10-23
+regular_bandage,Bandage,5,2026-10-23
+seeker_grenade,Seeker Grenade,5,2026-10-23
+sentinel_firing_cores,Sentinel Firing Core,3,2026-10-23
+sheet_metal,Sheet Metal,50,2026-10-23
+shotgun_ammo,Shotgun Ammo,20,2026-10-23
+skulker_targeter,Skulker Targeter,3,2026-10-23
+smoke_grenade,Smoke Grenade,5,2026-10-23
+speaker_components,Speaker Component,5,2026-10-23
+spectrum_analyzer,Spectrum Analyzer,3,2026-10-23
+stencil_parts,Stencil Parts,500,2026-10-23
+sterilized_bandage,Sterilized Bandage,3,2026-10-23
+syringe,Syringe,5,2026-10-23
+vaporizer_regulator,Vaporizer Regulator,3,2026-10-23
+vitashot,Vita Shot,3,2026-10-23
+voltage_converter,Voltage Converter,5,2026-10-23
+wasp_driver,Wasp Driver,3,2026-10-23
+water_pump,Water Pump,3,2026-10-23
+zipline,Zipline,3,2026-10-23

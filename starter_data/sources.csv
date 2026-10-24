@@ -1,0 +1,73 @@
+id,seq,kind,observed_on,reference
+src_0001,0,import,2026-10-19,import recorded by the companion's original player
+src_0002,1,user_report,2026-10-19,user_report recorded by the companion's original player
+src_0003,2,partial_user_report,2026-10-19,partial_user_report recorded by the companion's original player
+src_0004,6,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Number_Plate
+src_0005,7,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Wasp_Driver
+src_0006,8,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Light_Shield
+src_0007,9,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Light_Impact_Grenade
+src_0008,10,user_report,2026-10-19,user_report recorded by the companion's original player
+src_0009,12,user_report,2026-10-19,user_report recorded by the companion's original player
+src_0010,21,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Looting_Mk._2
+src_0011,22,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Shield_Recharger
+src_0012,23,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Adrenaline_Shot
+src_0013,24,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Electrical_Components
+src_0014,25,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Seeker_Grenade
+src_0015,30,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Rattler; I=16metal12rubber; I->II=10metal10rubber; II->III and III->IV each3MechanicalComponents1SimpleGunPart. All require Gunsmith1.
+src_0016,38,web_reference,2026-10-19,https://arcraiders.wiki/wiki/Rusted_Tools
+src_0017,77,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0018,79,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0019,83,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0020,89,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0021,104,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0022,105,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0023,117,user_report,2026-10-20,user_report recorded by the companion's original player
+src_0024,147,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0025,154,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0026,155,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0027,158,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0028,160,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0029,178,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0030,179,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0031,182,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0032,183,user_report,2026-10-21,user_report recorded by the companion's original player
+src_0033,193,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0034,201,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0035,202,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0036,221,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0037,223,web,2026-10-22,https://arcraiders.wiki/wiki/Stable_Stock_II ; Renegadecompatible;attachmentnotcompleted.
+src_0038,237,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0039,239,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0040,241,user_report,2026-10-22,user_report recorded by the companion's original player
+src_0041,245,web,2026-10-22,https://arcraiders.wiki/wiki/Anvil
+src_0042,246,web,2026-10-22,https://arcraiders.wiki/wiki/Ferro
+src_0043,247,web,2026-10-22,https://arcraiders.wiki/wiki/Rascal
+src_0044,248,web,2026-10-22,https://arcraiders.wiki/wiki/Hullcracker
+src_0045,249,web,2026-10-22,https://arcraiders.wiki/wiki/Bettina
+src_0046,250,web,2026-10-22,https://arcraiders.wiki/wiki/Launcher_Ammo
+src_0047,251,web,2026-10-22,https://arcraiders.wiki/wiki/Wasp
+src_0048,252,web,2026-10-22,https://arcraiders.wiki/wiki/Hornet
+src_0049,253,web,2026-10-22,https://arcraiders.wiki/wiki/Firefly
+src_0050,254,web,2026-10-22,https://arcraiders.wiki/wiki/Sentinel
+src_0051,255,web,2026-10-22,https://arcraiders.wiki/wiki/Bombardier
+src_0052,256,web,2026-10-22,https://arcraiders.wiki/wiki/Bastion
+src_0053,257,web,2026-10-22,https://arcraiders.wiki/wiki/Leaper
+src_0054,258,web,2026-10-22,https://arcraiders.wiki/wiki/Rocketeer
+src_0055,259,analysis,2026-10-22,analysis recorded by the companion's original player
+src_0056,262,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0057,263,web_reference,2026-10-23,"RaidTheory/arcraiders-data@2a4abebb (2026-08-18, game update 1.42.0, pre Frozen Trail 2.0) items/*.json stackSize and type. Spot-checked against the player's screen on 2026-10-23: every observed stack size agrees. Re-run after guarding renames against name collisions."
+src_0058,266,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0059,267,web_reference,2026-10-23,RaidTheory/arcraiders-data@2a4abebb re-run for the newly added Extended Light Mag I.
+src_0060,269,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0061,285,web_reference,2026-10-23,"RaidTheory/arcraiders-data@2a4abebb (2026-08-18, pre Frozen Trail 2.0): add the rest of the item catalogue so every game item resolves by its exact name; needed for starter goals (bench upgrades)."
+src_0062,297,web,2026-10-23,https://arcraiders.wiki/wiki/Scrappy (modified 2026-10-12): per-round rewards for levels 1-5 by minutes in round and extraction; level 4 values marked accurate as of Update 1.31.0.
+src_0063,298,web_reference,2026-10-23,"RaidTheory/arcraiders-data@2a4abebb (pre Frozen Trail 2.0): sale values and recipes where none is recorded, for raid debriefs. Player readings and wiki rows already recorded win."
+src_0064,325,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0065,328,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0066,331,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0067,352,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0068,362,web,2026-10-23,"https://arcraiders.wiki/wiki/Augments (C2 table; 2.0 notes list no slot changes). Looting Mk. 2 confirmed in game 2026-10-23: 22 backpack, 4 quick use, 2 safe pocket, weight 60."
+starter_workshop,363,web,2026-10-23,"https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
+starter_stash,364,web,2026-10-23,https://arcraiders.wiki/wiki/Stash: 64 slots at level 1
+starter_defaults,365,user_preference,2026-10-23,Starter profile defaults; edit to taste with arc set-preference
+starter_refiner_iii,366,user_report,2026-10-23,"In-game Refiner III upgrade, read by a player on 2026-10-23: 3 Motor, 10 ARC Circuitry, 6 Bombardier Cell, and no Outpost requirement (the Workshop wiki page says it needs one)"

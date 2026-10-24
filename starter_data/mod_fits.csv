@@ -1,0 +1,16 @@
+mod_id,weapon_id,slot,source_id
+silencer_i,rattler_iv,muzzle,src_0018
+compensator_tier_unknown,renegade_i,muzzle,src_0018
+extended_medium_mag_ii,venator_i,magazine,src_0019
+extended_medium_mag_i,arpeggio_i,magazine,src_0030
+silencer_i,arpeggio_i,muzzle,src_0031
+stable_stock_ii,arpeggio_i,stock,src_0031
+vertical_grip_tier_unknown,arpeggio_i,underbarrel,src_0034
+extended_medium_mag_i,renegade_i,magazine,src_0035
+silencer_i,rattler_ii,muzzle,src_0035
+stable_stock_ii,rattler_ii,stock,src_0035
+vertical_grip_tier_unknown,rattler_ii,underbarrel,src_0035
+stable_stock_ii,renegade_i,stock,src_0037
+extended_light_mag_i,berletta_i,magazine,src_0058
+silencer_i,anvil_ii,muzzle,src_0064
+silencer_i,anvil_iii,muzzle,src_0067

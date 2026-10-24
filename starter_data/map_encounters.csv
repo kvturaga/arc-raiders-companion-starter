@@ -1,0 +1,10 @@
+game_map_id,enemy_id,location,source_id
+spaceport,bombardier,East of Vehicle Maintenance; The Trench,src_0051
+buried_city,bombardier,Parking Garage roof; Marano Park; north of Plaza Rosa,src_0051
+dam_battlegrounds,bombardier,Primary Facility during Night Raid,src_0051
+spaceport,bastion,Southwest of hangars or Launch Tower; east of Vehicle Maintenance,src_0052
+buried_city,bastion,Market Ruins; Marano Park; north of Plaza Rosa,src_0052
+dam_battlegrounds,bastion,East of Water Treatment Control; Red Lakes Balcony,src_0052
+spaceport,leaper,Map-level presence; exact spawn not recorded,src_0053
+buried_city,leaper,Map-level presence; exact spawn not recorded,src_0053
+dam_battlegrounds,leaper,Map-level presence; exact spawn not recorded,src_0053
