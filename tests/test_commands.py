@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 import pytest
 
 from arc_companion import commands
-from arc_companion.enums import GoalStatus, Location, RaidStatus
-from arc_companion.model import Item, RaidReport, Reservation, UnreconciledHolding
+from arc_companion.enums import GoalStatus, Location, MetricKind, RaidStatus
+from arc_companion.model import (
+    AccountMetric,
+    Item,
+    RaidReport,
+    Reservation,
+    UnreconciledHolding,
+)
 from arc_companion.queries import balance
 from arc_companion.store import LoadError, load, write_lock
 
@@ -68,3 +75,30 @@ def test_a_second_writer_is_refused(project: Path) -> None:
 def test_a_note_is_mandatory(project: Path) -> None:
     with pytest.raises(commands.Refused, match="note"):
         commands.apply(project, " ", "pytest", commands.set_stash(1, 2), commit=False)
+
+
+def _committed(project: Path) -> Path:
+    for args in (
+        ("init", "-q", "-b", "main"),
+        ("config", "user.name", "t"),
+        ("config", "user.email", "t@t"),
+        ("add", "data"),
+        ("commit", "-qm", "start"),
+    ):
+        subprocess.run(["git", "-C", str(project), *args], check=True, capture_output=True)
+    return project
+
+
+def _coins(project: Path) -> int:
+    return load(project / "data").get(AccountMetric, MetricKind.COINS).value
+
+
+def test_undo_reverts_the_last_data_write_once(project: Path) -> None:
+    _committed(project)
+    before = _coins(project)
+    commands.apply(project, "misheard", "pytest", commands.set_metric(MetricKind.COINS, 9))
+    summary = commands.undo(project, "it was 90k, not 9", "pytest")
+    assert summary.startswith("undo ")
+    assert _coins(project) == before
+    with pytest.raises(commands.Refused, match="not a data write"):
+        commands.undo(project, "again", "pytest")  # one step: never a redo

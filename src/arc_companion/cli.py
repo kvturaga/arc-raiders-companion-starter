@@ -36,7 +36,7 @@ from .enums import (
 from .model import Goal, Item
 from .queries import open_questions, plan, resolve, stash_after
 from .reference import read_dataset
-from .store import LoadError, State, ensure_tables, load
+from .store import LoadError, State, ensure_tables, load, recover, write_lock
 
 PROJECT = Path(__file__).resolve().parents[2]
 
@@ -112,7 +112,11 @@ def _emit(payload: Any) -> None:
 
 
 def _state(args: argparse.Namespace) -> State:
-    return load(commands.data_dir(args.project))
+    root = commands.data_dir(args.project)
+    if not root.exists():  # a crash mid-save; finish it under the lock before reading
+        with write_lock(args.project):
+            recover(root)
+    return load(root)
 
 
 def _stack_pair(raw: str) -> tuple[str, int]:
@@ -236,6 +240,21 @@ def _audit(args: argparse.Namespace) -> None:
     print("\n".join(lines))
     if not ok:
         raise SystemExit(1)
+
+
+@writer("record-death", "the raider died: carried slots to zero, the safe pocket kept (C1)")
+def _record_death(args: argparse.Namespace) -> commands.Change:
+    return commands.record_death()
+
+
+@action(
+    "undo",
+    "revert the last data write, as a commit of its own",
+    arg("--note", required=True, help="why it is being undone"),
+    arg("--actor", default=_actor()),
+)
+def _undo(args: argparse.Namespace) -> None:
+    _emit({"applied": commands.undo(args.project, args.note, args.actor)})
 
 
 # --- writes: inventory ------------------------------------------------------------------------
@@ -540,7 +559,7 @@ def _import_augment_capacities(args: argparse.Namespace) -> commands.Change:
 def _export_starter(args: argparse.Namespace) -> None:
     dest = args.dest.resolve()
     fresh = not dest.exists()
-    starter = export(args.project, dest, dt.date.today(), args.upstream)
+    starter = export(args.project, dest, args.upstream)
     if problems := errors(run(starter)):
         raise SystemExit("rules failed:\n" + "\n".join(f.message for f in problems))
     git = ["git", "-C", str(dest)]

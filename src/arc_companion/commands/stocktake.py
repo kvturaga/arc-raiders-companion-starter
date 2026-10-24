@@ -126,6 +126,50 @@ def stocktake(
     return change
 
 
+_LOST_ON_DEATH = frozenset(
+    {Location.EQUIPMENT, Location.BACKPACK, Location.QUICK_USE, Location.CARRIED}
+)
+
+
+def record_death() -> Change:
+    """Death (C1): everything carried is lost except the safe pocket, mods on lost weapons too.
+
+    The same steps as a stocktake that saw nothing in the carried slots, plus a loss event per
+    item so history says what went down with the raider. The stash is not touched.
+    """
+
+    def change(state: State, source: Source) -> str:
+        count = _Count(
+            state=state,
+            source=source,
+            covered=_LOST_ON_DEATH,
+            seen={},
+            attached={a.mod.id for a in state.all(WeaponAttachment)},
+        )
+        lost: dict[Item, int] = {}
+        for h in state.all(Holding):
+            if h.location in _LOST_ON_DEATH and h.quantity:
+                lost[h.item] = lost.get(h.item, 0) + h.quantity
+        for piece in state.all(ItemInstance):
+            if piece.location in _LOST_ON_DEATH:
+                lost[piece.item] = lost.get(piece.item, 0) + 1
+        losses = sorted((item.id, n) for item, n in lost.items())
+        _zero_unseen(count)
+        _remove_unseen_pieces(count)
+        _record_events(count, tuple((ActionKind.LOSS, item, n) for item, n in losses))
+        closed = _close_unreconciled(count)
+        kept = sorted(
+            {h.item.id for h in state.all(Holding) if h.location is Location.SAFE_POCKET}
+            | {i.item.id for i in state.all(ItemInstance) if i.location is Location.SAFE_POCKET}
+        )
+        return (
+            f"death: lost {', '.join(f'{item} {n}' for item, n in losses) or 'nothing'}"
+            f"; safe pocket kept: {', '.join(kept) or 'nothing'}; {closed} unreconciled rows closed"
+        )
+
+    return change
+
+
 def _held(count: _Count, item: Item) -> int | None:
     """Units of an item across the counted locations (stacks plus tracked pieces), or None if
     any of its stacks there was never counted. Moves between counted places net to zero."""

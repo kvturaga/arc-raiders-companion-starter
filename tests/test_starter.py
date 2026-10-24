@@ -47,7 +47,7 @@ SEED = PROJECT / "data" if (PROJECT / "data").exists() else PROJECT / STARTER_DA
 
 @pytest.fixture(scope="module")
 def starter() -> State:
-    return build_starter(load(SEED), TODAY)
+    return build_starter(load(SEED))
 
 
 def test_the_starter_passes_every_rule(starter: State) -> None:
@@ -98,7 +98,7 @@ def test_backup_kits_follow_the_recipe_and_wait_for_gunsmith_i(starter: State) -
 
 def test_export_writes_a_package_without_history(tmp_path: Path) -> None:
     dest = tmp_path / "friend"
-    export(PROJECT, dest, TODAY)
+    export(PROJECT, dest)
     assert (dest / "src" / "arc_companion" / "starter.py").exists()
     assert (dest / "docs" / "new_player_guide.md").exists()
     assert (dest / ".github" / "workflows" / "ci.yml").exists()
@@ -113,7 +113,7 @@ def test_export_writes_a_package_without_history(tmp_path: Path) -> None:
         assert not (dest / absent).exists()
     assert load(dest / STARTER_DATA).all(Holding) == []
     with pytest.raises(FileExistsError):  # exists, and is not a starter repo clone
-        export(PROJECT, dest, TODAY)
+        export(PROJECT, dest)
 
 
 def test_nothing_identifying_survives_in_the_starter(starter: State) -> None:
@@ -140,7 +140,7 @@ def _commit_all(repo: Path, message: str) -> None:
 
 def test_a_friend_inits_checks_and_takes_an_update(tmp_path: Path) -> None:
     upstream = tmp_path / "starter"
-    export(PROJECT, upstream, TODAY, upstream=str(upstream))
+    export(PROJECT, upstream, upstream=str(upstream))
     _git(upstream, "init", "-q", "-b", "main")
     _commit_all(upstream, "v1")
     friend = tmp_path / "friend"
@@ -168,7 +168,7 @@ def test_a_friend_inits_checks_and_takes_an_update(tmp_path: Path) -> None:
 
 
 def test_merge_keeps_the_players_own_readings_and_progress(starter: State) -> None:
-    player = build_starter(load(SEED), TODAY)
+    player = build_starter(load(SEED))
     mine = Source(
         id="obs_1", seq=10**6, kind=SourceKind.USER_REPORT, observed_on=TODAY, reference="x"
     )
@@ -192,7 +192,7 @@ def test_merge_keeps_the_players_own_readings_and_progress(starter: State) -> No
 
 
 def test_a_starter_can_itself_be_exported(starter: State) -> None:
-    again = build_starter(starter, TODAY)
+    again = build_starter(starter)
     assert errors(run(again)) == []
     assert len(again.all(Goal)) == len(starter.all(Goal))
 

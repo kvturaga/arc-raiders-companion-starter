@@ -167,3 +167,23 @@ def test_a_count_that_disagrees_with_records_names_the_item(project: Path) -> No
         a for a in load(project / "data").all(InventoryAction) if a.kind is ActionKind.RESIDUAL
     ]
     assert [(a.item.id, a.quantity) for a in residual] == [("light_ammo", 8)]
+
+
+def test_a_death_loses_every_carried_slot_but_the_safe_pocket(project: Path) -> None:
+    before = load(project / "data")
+    stash = {h.id: h.quantity for h in before.all(Holding) if h.location is Location.STASH}
+    summary = apply_change(project, commands.record_death())
+    after = load(project / "data")
+    lost = (Location.EQUIPMENT, Location.BACKPACK, Location.QUICK_USE)
+    assert not [h for h in after.all(Holding) if h.location in lost and h.quantity]
+    assert not [i for i in after.all(ItemInstance) if i.location in lost]
+    # The Rattler's mods went down with it; the Renegade's stay on it in the stash.
+    assert {a.weapon.item.id for a in after.all(WeaponAttachment)} == {"renegade_i"}
+    pocket = {i.item.id for i in after.all(ItemInstance) if i.location is Location.SAFE_POCKET}
+    assert pocket == {"grappling_hook", "photoelectric_cloak"}
+    assert {h.id: h.quantity for h in after.all(Holding) if h.location is Location.STASH} == stash
+    losses = {
+        a.item.id: a.quantity for a in after.all(InventoryAction) if a.kind is ActionKind.LOSS
+    }
+    assert losses["medium_ammo"] == 160
+    assert "rattler_ii 1" in summary

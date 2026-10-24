@@ -7,3 +7,4 @@ __pycache__/
 .arc-write.lock
 data.staging/
 data.retired/
+.coverage

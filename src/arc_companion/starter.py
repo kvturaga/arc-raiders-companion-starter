@@ -93,6 +93,10 @@ PLACEHOLDERS = frozenset(
 )
 
 
+# The day the starter's own facts below were read. A source is dated by its reading, never by
+# the export, so re-publishing leaves provenance (and the starter's diff) unchanged.
+READ_ON = dt.date(2026, 10, 23)
+
 WORKSHOP = "https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
 
 
@@ -284,7 +288,7 @@ def _fresh(entity: Entity, workshop: Source, defaults: Source) -> Entity:
     return entity
 
 
-def build_starter(state: State, today: dt.date) -> State:
+def build_starter(state: State) -> State:
     starter = State()
     kept = _without_dangling([e for cls in REFERENCE for e in state.all(cls)])
     used = {s.id: s for e in kept for s in _sources_of(e)}
@@ -293,7 +297,7 @@ def build_starter(state: State, today: dt.date) -> State:
     def new_source(source_id: str, kind: SourceKind, reference: str) -> Source:
         nonlocal seq
         seq += 1
-        return Source(id=source_id, seq=seq, kind=kind, observed_on=today, reference=reference)
+        return Source(id=source_id, seq=seq, kind=kind, observed_on=READ_ON, reference=reference)
 
     renamed: dict[str, Source] = {}
     for source in sorted(used.values(), key=lambda s: s.seq):

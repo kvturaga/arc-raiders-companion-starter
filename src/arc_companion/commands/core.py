@@ -22,7 +22,7 @@ from ..model import (
     StackSize,
 )
 from ..queries import resolve, slots_needed
-from ..store import State, load, save, write_lock
+from ..store import State, load, recover, save, write_lock
 
 Change = Callable[[State, Source], str]
 
@@ -47,6 +47,7 @@ def apply(
     if not note.strip():
         raise Refused("a note recording what the player observed is required")
     with write_lock(project):
+        recover(data_dir(project))
         work = load(data_dir(project))
         now = dt.datetime.now()
         source = Source(
@@ -69,8 +70,37 @@ def apply(
 
 def _commit(project: Path, message: str) -> None:
     git = ["git", "-C", str(project)]
-    subprocess.run([*git, "add", "data"], check=True, capture_output=True)
-    subprocess.run([*git, "commit", "-q", "-m", message], check=True, capture_output=True)
+    _git(git, "add", "data")
+    _git(git, "commit", "-q", "-m", message)
+
+
+def undo(project: Path, note: str, actor: str) -> str:
+    """Revert the last data write (a misheard number, a wrong item) as a commit of its own.
+
+    One step only: the undo commit carries no source, so a second `undo` refuses rather than
+    redoing. Older writes are corrected with a setter, which records why.
+    """
+    if not note.strip():
+        raise Refused("a note saying why the write is being undone is required")
+    git = ["git", "-C", str(project)]
+    with write_lock(project):
+        last = _git(git, "log", "-1", "--format=%h%n%B")
+        sha, _, body = last.partition("\n")
+        if "\nsource: " not in body:
+            raise Refused(f"the last commit ({sha}) is not a data write; nothing to undo")
+        if _git(git, "status", "--porcelain", "--", "data"):
+            raise Refused("data/ has uncommitted changes; not undoing over them")
+        _git(git, "revert", "--no-commit", "HEAD")
+        if problems := errors(run(load(data_dir(project)))):
+            _git(git, "revert", "--abort")
+            raise Refused("; ".join(f"[{f.rule}] {f.message}" for f in problems))
+        summary = f"undo {sha}: {body.splitlines()[0]}"
+        _git(git, "commit", "-q", "-m", f"{summary}\n\nactor: {actor}\nnote: {note.strip()}")
+    return summary
+
+
+def _git(git: list[str], *args: str) -> str:
+    return subprocess.run([*git, *args], check=True, capture_output=True, text=True).stdout.strip()
 
 
 def _holding_id(item: Item, location: Location) -> str:

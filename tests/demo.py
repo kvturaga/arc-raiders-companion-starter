@@ -6,7 +6,6 @@ player's records. The script doubles as a worked example of a first session.
 
 from __future__ import annotations
 
-import datetime as dt
 from pathlib import Path
 
 from arc_companion import commands
@@ -16,7 +15,6 @@ from arc_companion.queries import stash_slot_math
 from arc_companion.starter import build_starter
 from arc_companion.store import load, write
 
-TODAY = dt.date(2026, 10, 23)
 STASH, EQUIP = Location.STASH, Location.EQUIPMENT
 
 # What the demo player's first stocktake reads: every stash slot, then every carried slot.
@@ -67,7 +65,7 @@ def _apply(project: Path, change: commands.Change) -> None:
 
 def build_demo(project: Path, seed: Path) -> None:
     """Write the demo player's data to `project / "data"`."""
-    write(build_starter(load(seed), TODAY), project / "data")
+    write(build_starter(load(seed)), project / "data")
     stash_tiles = sum(len(line.stacks) for line in FIRST_COUNT if line.location is STASH)
     _apply(project, commands.stocktake(list(FIRST_COUNT), stash_used=stash_tiles))
     for weapon, mod, slot in MODS:

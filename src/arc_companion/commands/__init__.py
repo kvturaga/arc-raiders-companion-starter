@@ -10,6 +10,7 @@ from .core import (
     Refused,
     apply,
     data_dir,
+    undo,
 )
 from .facts import (
     import_augment_capacities,
@@ -48,7 +49,7 @@ from .scrappy import (
     parse_scrappy,
     set_scrappy_level,
 )
-from .stocktake import CountLine, carried_stash, parse_stacks, stocktake
+from .stocktake import CountLine, carried_stash, parse_stacks, record_death, stocktake
 
 __all__ = [
     "Change",
@@ -70,6 +71,7 @@ __all__ = [
     "parse_scrappy",
     "parse_stacks",
     "reconcile",
+    "record_death",
     "resolve_question",
     "set_build",
     "set_condition",
@@ -85,5 +87,6 @@ __all__ = [
     "set_stash",
     "starter_update",
     "stocktake",
+    "undo",
     "upgrade_piece",
 ]

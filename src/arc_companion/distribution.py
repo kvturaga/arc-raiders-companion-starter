@@ -7,7 +7,6 @@ Git is the transport. A copy's `UPSTREAM` file names the starter repo; `init` re
 from __future__ import annotations
 
 import csv
-import datetime as dt
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -86,7 +85,7 @@ Record any shortcut knowingly left in the code here.
 """
 
 
-def export(project: Path, dest: Path, today: dt.date, upstream: str = STARTER_REPO) -> State:
+def export(project: Path, dest: Path, upstream: str = STARTER_REPO) -> State:
     """Write a new player's package to `dest` and return its game facts.
 
     `dest` is either new, or a clone of the starter repo whose tracked files are replaced, so
@@ -95,7 +94,7 @@ def export(project: Path, dest: Path, today: dt.date, upstream: str = STARTER_RE
     if dest.exists() and not (dest / ".git").exists():
         raise FileExistsError(f"{dest} exists and is not a starter repo clone")
     seed = project / "data" if (project / "data").exists() else project / STARTER_DATA
-    starter = build_starter(load(seed), today)
+    starter = build_starter(load(seed))
     for old in dest.glob("*") if dest.exists() else []:
         if old.name != ".git":
             shutil.rmtree(old) if old.is_dir() else old.unlink()

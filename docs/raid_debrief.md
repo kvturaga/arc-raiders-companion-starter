@@ -63,14 +63,20 @@ When the player makes a call that should stick ("always keep Hornet Drivers"), r
    states the stash counter and coins the player should now see, and which items spill into or
    free a stack. Tell the player; they read the real numbers.
 2. If both match, save in one checked step: `arc stocktake loadout.csv --carry --add ... --remove
-   ... --sell ... --stash-used <counter>`. The changes are recorded as events; any item whose
-   count still disagrees is reported as a residual. `loadout.csv` lists the carried slots (with durability in the
-   `condition` column); the stash is the records plus the changes. It refuses unless the stash
+   ... --sell ... --stash-used <counter>`. The changes are recorded as events; any item
+   whose count still disagrees is reported as a residual. `loadout.csv` lists the carried slots
+   (with durability in the `condition` column); the stash is the records plus the changes. It refuses unless the stash
    reproduces the counter.
 3. If they do not match, an input is missing (A9): ask before saving. Never force the numbers.
 4. Then: `arc claim-scrappy "8s and 11" --stash-used <counter>` (and `--ate` for eaten food),
    `arc set-metric coins <n>`, `arc attach-mod` / `detach-mod` / `upgrade` for gear changes,
    `arc contribute <goal> <item> <n> [--from raid]` for project hand-ins, and `arc set-disposition`
    or `arc add-goal` for calls the player wants to keep.
+
+**If the raider died**, run `arc record-death` first: every carried slot goes to zero except the
+safe pocket, and the losses are recorded. Then predict and save as above, with no haul.
+
+**If a write was wrong** (a misheard number, the wrong item), `arc undo --note "<why>"` reverts the
+last data write as a commit of its own. It undoes one step; correct anything older with a setter.
 
 Then `uv run arc bootstrap` and tell the player the next targets.

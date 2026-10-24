@@ -202,11 +202,7 @@ def write(state: State, root: Path) -> None:
 
 def save(state: State, root: Path) -> None:
     """Write to a sibling directory, prove it reloads, then swap it in."""
-    staging = root.with_name(root.name + ".staging")
-    retired = root.with_name(root.name + ".retired")
-    for leftover in (staging, retired):
-        if leftover.exists():
-            raise LoadError(f"{leftover} exists from an interrupted write; inspect it first")
+    staging, retired = _siblings(root)
     write(state, staging)
     load(staging)
     for extra in root.glob("*"):
@@ -217,19 +213,52 @@ def save(state: State, root: Path) -> None:
     shutil.rmtree(retired)
 
 
+def _siblings(root: Path) -> tuple[Path, Path]:
+    return root.with_name(root.name + ".staging"), root.with_name(root.name + ".retired")
+
+
+def recover(root: Path) -> None:
+    """Finish or discard a save a crash interrupted. Call only while holding the write lock.
+
+    `save` proves staging reloads before either rename, so: with `root` present, staging is an
+    unfinished write and retired is the old copy of a finished swap, and both go; with `root`
+    gone, the crash fell between the renames and the verified staging becomes `root`.
+    """
+    staging, retired = _siblings(root)
+    if not root.exists():
+        (staging if staging.exists() else retired).rename(root)
+    for leftover in (staging, retired):
+        if leftover.exists():
+            shutil.rmtree(leftover)
+
+
 @contextmanager
 def write_lock(project: Path) -> Iterator[None]:
     lock = project / ".arc-write.lock"
     try:
         fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
     except FileExistsError:
-        raise LoadError(f"{lock} is held by another writer (pid inside); not writing") from None
+        if not _stale(lock):
+            raise LoadError(f"{lock} is held by another writer (pid inside); not writing") from None
+        lock.unlink()  # its writer died without releasing it
+        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
     with os.fdopen(fd, "w") as handle:
         handle.write(str(os.getpid()))
     try:
         yield
     finally:
         lock.unlink()
+
+
+def _stale(lock: Path) -> bool:
+    """A lock whose writer process no longer exists."""
+    try:
+        os.kill(int(lock.read_text()), 0)
+    except ProcessLookupError:
+        return True
+    except (ValueError, PermissionError, FileNotFoundError):
+        return False  # unreadable, or another user's live process: leave it to a person
+    return False
 
 
 def ensure_tables(root: Path) -> list[str]:
