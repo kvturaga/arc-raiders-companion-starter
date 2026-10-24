@@ -11,7 +11,12 @@ dependencies = []
 arc = "arc_companion.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest-cov>=7.1.0",
+]
 
 [build-system]
 requires = ["hatchling"]

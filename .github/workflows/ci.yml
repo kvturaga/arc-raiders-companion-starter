@@ -19,7 +19,10 @@ jobs:
       - name: Types
         run: uv run mypy
       - name: Tests
-        run: uv run pytest
+        # The full suite (with the legacy import) must cover 90%; a shared copy runs its own tests.
+        run: |
+          if [ -d legacy ]; then floor=90; else floor=0; fi
+          uv run pytest --cov=arc_companion --cov-report=term --cov-fail-under=$floor
       - name: Data rules
         run: |
           if [ -d data ]; then uv run arc audit; else uv run arc init && uv run arc audit; fi

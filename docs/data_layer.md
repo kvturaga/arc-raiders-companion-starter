@@ -1,6 +1,6 @@
 # Data layer
 
-Each table in `data/` is one class in `src/arc_companion/model.py`. A field typed as another
+Each table in `data/` is one class in `src/arc_companion/model/`, in the module for its layer. A field typed as another
 entity is stored as `<field>_id` and resolved to the object on load; an unknown id fails the
 load. Categorical columns are enums (`enums.py`); free text in them fails the load.
 
