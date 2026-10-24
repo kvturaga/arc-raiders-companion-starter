@@ -6,9 +6,10 @@ import pytest
 
 from arc_companion import commands
 from arc_companion.commands import CountLine, parse_stacks
-from arc_companion.enums import ItemCategory, Location
+from arc_companion.enums import ActionKind, ItemCategory, Location
 from arc_companion.model import (
     Holding,
+    InventoryAction,
     Item,
     ItemInstance,
     Reservation,
@@ -16,7 +17,7 @@ from arc_companion.model import (
     UnreconciledHolding,
     WeaponAttachment,
 )
-from arc_companion.queries import balance, stash_after
+from arc_companion.queries import balance, resolve, stash_after
 from arc_companion.store import load
 
 from .conftest import apply_change
@@ -140,3 +141,29 @@ def test_a_carried_stocktake_with_no_changes_keeps_every_count(project: Path) ->
     }
     assert after == before
     assert "removed" not in summary
+
+
+def test_a_carried_raid_records_its_events_and_leaves_no_residual(project: Path) -> None:
+    state = load(project / "data")
+    add, sold = {resolve(state, "Metal Parts"): 15}, {resolve(state, "Wires"): 2}
+    lines = commands.carried_stash(state, stash_after(state, add, sold))
+    events = ((ActionKind.LOOT, "Metal Parts", 15), (ActionKind.SELL, "Wires", 2))
+    used = sum(len(x.stacks) for x in lines)
+    summary = apply_change(project, commands.stocktake(lines, used, events))
+    assert "residual" not in summary
+    kinds = {(a.kind, a.item.id, a.quantity) for a in load(project / "data").all(InventoryAction)}
+    assert (ActionKind.LOOT, "metal_parts", 15) in kinds
+    assert (ActionKind.SELL, "wires", 2) in kinds
+
+
+def test_a_count_that_disagrees_with_records_names_the_item(project: Path) -> None:
+    state = load(project / "data")
+    lines = commands.carried_stash(state, stash_after(state, {}, {}))
+    light = next(x for x in lines if x.item == "light_ammo")
+    lines[lines.index(light)] = CountLine(STASH, "light_ammo", (100, 28))  # 8 more than recorded
+    summary = apply_change(project, commands.stocktake(lines, sum(len(x.stacks) for x in lines)))
+    assert "light_ammo +8" in summary
+    residual = [
+        a for a in load(project / "data").all(InventoryAction) if a.kind is ActionKind.RESIDUAL
+    ]
+    assert [(a.item.id, a.quantity) for a in residual] == [("light_ammo", 8)]

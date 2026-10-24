@@ -32,6 +32,7 @@ from .model import (
     StackSize,
     StashCounter,
     UnreconciledHolding,
+    WeaponAttachment,
 )
 from .packets import (
     Bootstrap,
@@ -203,8 +204,9 @@ def loadout(state: State) -> list[LoadoutRow]:
         Location.CARRIED,
     )
     rows: list[LoadoutRow] = []
+    attached = {a.mod.id for a in state.all(WeaponAttachment)}  # mods ride in their weapon's slot
     for i in state.all(ItemInstance):
-        if i.location in carried:
+        if i.location in carried and i.id not in attached:
             rows.append(
                 {"location": i.location.value, "item": i.item.name, "quantity": 1, "piece": i.id}
             )

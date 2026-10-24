@@ -10,10 +10,11 @@ from __future__ import annotations
 import dataclasses
 from dataclasses import dataclass, field
 
-from ..enums import Confidence, GoalStatus, Location
+from ..enums import ActionKind, Confidence, GoalStatus, Location
 from ..model import (
     GoalRequirement,
     Holding,
+    InventoryAction,
     Item,
     ItemInstance,
     Source,
@@ -54,6 +55,9 @@ def parse_stacks(raw: str) -> tuple[int, ...]:
 
 
 Seen = dict[tuple[Item, Location], list[CountLine]]
+# A change the player reported alongside a count: (kind, item name, quantity).
+Event = tuple[ActionKind, str, int]
+_SIGN = {ActionKind.LOOT: 1, ActionKind.USED: -1, ActionKind.SELL: -1}
 
 
 @dataclass
@@ -66,6 +70,7 @@ class _Count:
     seen: Seen
     attached: set[str]
     removed: list[str] = field(default_factory=list)
+    residuals: list[str] = field(default_factory=list)
     zeroed: int = 0
 
     def seen_at(self, item: Item, location: Location) -> bool:
@@ -79,12 +84,18 @@ class _Count:
         ]
 
 
-def stocktake(lines: list[CountLine], stash_used: int | None) -> Change:
+def stocktake(
+    lines: list[CountLine], stash_used: int | None, events: tuple[Event, ...] = ()
+) -> Change:
     """A complete live count of every location that appears in `lines`.
 
     Anything recorded in a covered location but not seen there becomes a recorded zero;
     tracked pieces not seen are removed, with their attachments. A stash count must reproduce
     the stash counter slot for slot, which is the proof that no tile was skipped or read twice.
+
+    `events` are the changes since the last count (loot in, sold, used). They are recorded as
+    history, and conservation is checked per item: a stash quantity that differs from records
+    plus events is a residual, recorded and named in the summary (B4, A9).
     """
     covered = frozenset(line.location for line in lines)
     if Location.STASH in covered and stash_used is None:
@@ -100,16 +111,79 @@ def stocktake(lines: list[CountLine], stash_used: int | None) -> Change:
             seen=_group(state, lines),
             attached={a.mod.id for a in state.all(WeaponAttachment)},
         )
+        expected = _expected(count, events) if Location.STASH in covered else {}
         if stash_used is not None:
             _check_counter(count, stash_used)
         for (item, location), group in count.seen.items():
             _settle(count, item, location, group)
         _zero_unseen(count)
         _remove_unseen_pieces(count)
+        _record_events(count, events)
+        _record_residuals(count, expected)
         closed = _close_unreconciled(count)
         return _summary(count, closed)
 
     return change
+
+
+def _held(count: _Count, item: Item) -> int | None:
+    """Units of an item across the counted locations (stacks plus tracked pieces), or None if
+    any of its stacks there was never counted. Moves between counted places net to zero."""
+    quantities = [
+        h.quantity
+        for h in count.state.all(Holding)
+        if h.item == item and h.location in count.covered
+    ]
+    pieces = sum(
+        1 for i in count.state.all(ItemInstance) if i.item == item and i.location in count.covered
+    )
+    if any(q is None for q in quantities) or (not quantities and not pieces):
+        return None  # never counted here: unobserved, not zero (A2)
+    return sum(q or 0 for q in quantities) + pieces
+
+
+def _expected(count: _Count, events: tuple[Event, ...]) -> dict[Item, int | None]:
+    """What each item should total across the counted places: records plus reported events.
+    `None` when the records never counted it (a first observation has no residual)."""
+    items = {item for item, _ in count.seen}
+    items |= {h.item for h in count.state.all(Holding) if h.location in count.covered}
+    expected = {item: _held(count, item) for item in items}
+    for kind, name, quantity in events:
+        item = resolve(count.state, name)
+        base = expected[item] if item in expected else _held(count, item)
+        expected[item] = (base or 0) + _SIGN[kind] * quantity
+    return expected
+
+
+def _record_events(count: _Count, events: tuple[Event, ...]) -> None:
+    for n, (kind, name, quantity) in enumerate(events):
+        count.state.add(
+            InventoryAction(
+                id=f"{count.source.id}_{n}",
+                kind=kind,
+                item=resolve(count.state, name),
+                quantity=quantity,
+                source=count.source,
+            )
+        )
+
+
+def _record_residuals(count: _Count, expected: dict[Item, int | None]) -> None:
+    """Live total minus records plus events, per item. Recorded signed; never absorbed."""
+    for item, should in sorted(expected.items(), key=lambda kv: kv[0].id):
+        actual = _held(count, item) or 0
+        if should is None or actual == should:
+            continue
+        count.state.add(
+            InventoryAction(
+                id=f"{count.source.id}_residual_{item.id}",
+                kind=ActionKind.RESIDUAL,
+                item=item,
+                quantity=actual - should,
+                source=count.source,
+            )
+        )
+        count.residuals.append(f"{item.id} {actual - should:+}")
 
 
 def _group(state: State, lines: list[CountLine]) -> Seen:
@@ -287,6 +361,10 @@ def _summary(count: _Count, closed: int) -> str:
     ]
     if count.removed:
         lines.append("not seen, removed: " + ", ".join(count.removed))
+    if count.residuals:
+        lines.append(
+            "residual (count differs from records plus events): " + ", ".join(count.residuals)
+        )
     if left:
         lines.append("still unallocated (not seen): " + ", ".join(left))
     return "\n".join(lines)

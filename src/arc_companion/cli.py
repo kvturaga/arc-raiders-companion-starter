@@ -22,6 +22,7 @@ from . import commands, views
 from .checks import errors, run
 from .distribution import STARTER_REPO, check_update, export, init, take_update
 from .enums import (
+    ActionKind,
     DispositionAction,
     GoalStatus,
     ItemCategory,
@@ -141,8 +142,8 @@ def _actor() -> str:
     return os.environ.get("ARC_ACTOR", "unknown-agent")
 
 
-def _pairs(flag: str, **options: Any) -> Arg:
-    return arg(flag, nargs="*", type=_stack_pair, default=[], metavar="ITEM=QTY", **options)
+def _pairs(flag: str, help: str | None = None) -> Arg:
+    return arg(flag, nargs="*", type=_stack_pair, default=[], metavar="ITEM=QTY", help=help)
 
 
 _WRITE_ARGS: tuple[Arg, ...] = (
@@ -290,16 +291,22 @@ def _reconcile(args: argparse.Namespace) -> commands.Change:
     arg("file", type=Path, help="CSV: location,item,stacks[,condition]"),
     arg("--stash-used", type=int, help="the in-game stash counter, e.g. 213"),
     arg("--carry", action="store_true", help="stash = records + --add/--remove; FILE = carried"),
-    _pairs("--add"),
-    _pairs("--remove"),
+    _pairs("--add", help="came in: loot unloaded, claimed, bought"),
+    _pairs("--remove", help="left otherwise: used, recycled, crafted in, moved out"),
+    _pairs("--sell"),
 )
 def _stocktake(args: argparse.Namespace) -> commands.Change:
     seen = read_count(args.file)
+    events = (
+        *((ActionKind.LOOT, n, q) for n, q in args.add),
+        *((ActionKind.USED, n, q) for n, q in args.remove),
+        *((ActionKind.SELL, n, q) for n, q in args.sell),
+    )
     if args.carry:
         state = _state(args)
-        after = stash_after(state, _items(state, args.add), _items(state, args.remove))
-        seen += commands.carried_stash(state, after)
-    return commands.stocktake(seen, args.stash_used)
+        removed = _items(state, [*args.remove, *args.sell])
+        seen += commands.carried_stash(state, stash_after(state, _items(state, args.add), removed))
+    return commands.stocktake(seen, args.stash_used, events)
 
 
 @writer(

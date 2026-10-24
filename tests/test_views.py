@@ -52,6 +52,8 @@ def test_loadout_lists_carried_stacks_and_pieces(project: Path) -> None:
     assert rows == sorted(rows, key=lambda r: (r["location"], r["item"]))
     assert any(r["piece"] for r in rows)  # tracked pieces carry their id
     assert all(r["quantity"] > 0 for r in rows)
+    # Mods on the Rattler are not separate slots, so they are not separate rows.
+    assert not [r for r in rows if r["item"] in ("Silencer I", "Stable Stock II")]
 
 
 def test_read_commands_print_json(capsys: pytest.CaptureFixture[str], project: Path) -> None:

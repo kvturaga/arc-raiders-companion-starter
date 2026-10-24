@@ -214,11 +214,13 @@ after = before + loot + crafted + rewards + bought − sold − recycled − cra
         − consumed − lost_on_death − contributed
 ```
 
-The check runs at the stash level, where the game gives an independent number: `arc predict`
-applies a raid's changes to the records (`stash_after`) and states the counter and coins the
-player should see; the player reads both; `stocktake --carry` saves only if the counter matches.
-Item-level event history (`raid_lines`, `inventory_actions`) is still only partly written by the
-setters, so a residual is located by stash slots and coins, not yet by item (debt).
+Checked two ways. **Before saving**, `arc predict` applies a raid's changes to the records and
+states the stash counter and coins the player should see; `stocktake --carry` saves only if the
+counter matches. **Per item**, every stocktake that counts the stash records the reported
+changes as `inventory_actions` (`loot`, `sell`, `used`) and compares each item's live total
+across the counted places with records plus those events. A difference is a `residual`: recorded
+with its sign and named in the result ("residual: light_ammo +8"), never absorbed (A9). Moves
+between counted places net to zero; a first observation of an item is never a residual (A2).
 
 ### B5. Rules enforced on every write
 

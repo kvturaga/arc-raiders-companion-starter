@@ -63,7 +63,8 @@ When the player makes a call that should stick ("always keep Hornet Drivers"), r
    states the stash counter and coins the player should now see, and which items spill into or
    free a stack. Tell the player; they read the real numbers.
 2. If both match, save in one checked step: `arc stocktake loadout.csv --carry --add ... --remove
-   ... --stash-used <counter>`. `loadout.csv` lists the carried slots (with durability in the
+   ... --sell ... --stash-used <counter>`. The changes are recorded as events; any item whose
+   count still disagrees is reported as a residual. `loadout.csv` lists the carried slots (with durability in the
    `condition` column); the stash is the records plus the changes. It refuses unless the stash
    reproduces the counter.
 3. If they do not match, an input is missing (A9): ask before saving. Never force the numbers.
