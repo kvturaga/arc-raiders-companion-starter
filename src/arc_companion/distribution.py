@@ -23,9 +23,7 @@ from .store import State, load, write
 # debt notes describe one player's history and stay behind.
 SHIPPED = (
     "src/arc_companion",
-    "tests/__init__.py",
-    "tests/conftest.py",
-    "tests/test_starter.py",
+    "tests",
     "docs/first_principles.md",
     "docs/data_layer.md",
     "docs/new_player_guide.md",
@@ -101,7 +99,8 @@ def export(project: Path, dest: Path, today: dt.date, upstream: str = STARTER_RE
     for old in dest.glob("*") if dest.exists() else []:
         if old.name != ".git":
             shutil.rmtree(old) if old.is_dir() else old.unlink()
-    ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".*_cache")
+    # The migration proof is bound to one player's legacy import and quotes their numbers.
+    ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".*_cache", "test_migration.py")
     for name in SHIPPED:
         source = project / name
         target = dest / name

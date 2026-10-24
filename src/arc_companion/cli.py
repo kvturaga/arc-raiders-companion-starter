@@ -467,6 +467,11 @@ def _feed_scrappy(args: argparse.Namespace) -> commands.Change:
     return commands.feed_scrappy(args.food, args.quantity)
 
 
+@writer("set-scrappy-level", "Scrappy's level after an upgrade", arg("level", type=int))
+def _set_scrappy_level(args: argparse.Namespace) -> commands.Change:
+    return commands.set_scrappy_level(args.level)
+
+
 @writer(
     "claim-scrappy",
     "claim his haul into the stash",

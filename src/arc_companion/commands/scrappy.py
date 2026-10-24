@@ -159,3 +159,16 @@ def _explain(
             minutes = rate.min_minutes_exclusive
             return f"{shown}; matches level {scrappy.level}, over {minutes} min, {how}"
     return f"{shown}; matches no level-{scrappy.level} bracket: an input is missing (food? bonus?)"
+
+
+def set_scrappy_level(level: int) -> Change:
+    """Scrappy's level after an upgrade (the rate table has levels 1-5)."""
+
+    def change(state: State, source: Source) -> str:
+        known = {r.level for r in state.all(ScrappyRate)}
+        if known and level not in known:
+            raise Refused(f"no Scrappy rates for level {level}; known: {sorted(known)}")
+        state.put(dataclasses.replace(_scrappy(state), level=level, source=source))
+        return f"set-scrappy-level {level}"
+
+    return change

@@ -46,6 +46,7 @@ from .scrappy import (
     claim_scrappy,
     feed_scrappy,
     parse_scrappy,
+    set_scrappy_level,
 )
 from .stocktake import CountLine, carried_stash, parse_stacks, stocktake
 
@@ -78,6 +79,7 @@ __all__ = [
     "set_goal_status",
     "set_metric",
     "set_preference",
+    "set_scrappy_level",
     "set_skill",
     "set_stack_sizes",
     "set_stash",

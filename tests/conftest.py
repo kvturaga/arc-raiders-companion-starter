@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import importlib
+import shutil
 from pathlib import Path
 from typing import cast
 
@@ -10,6 +11,8 @@ import pytest
 from arc_companion import commands
 from arc_companion.enums import SourceKind
 from arc_companion.store import State, write
+
+from .demo import build_demo
 
 PROJECT = Path(__file__).resolve().parents[1]
 # A new player's package has no legacy import; tests that need it skip.
@@ -27,9 +30,28 @@ def migrated() -> State:
     return cast(State, state)
 
 
+# Game facts for the demo player: this repo's data, or a shared copy's starter_data.
+SEED = PROJECT / "data" if (PROJECT / "data").exists() else PROJECT / "starter_data"
+
+
+@pytest.fixture(scope="session")
+def demo_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    root = tmp_path_factory.mktemp("demo")
+    build_demo(root, SEED)
+    return root
+
+
 @pytest.fixture
-def project(tmp_path: Path, migrated: State) -> Path:
-    """A throwaway project (no git) whose data/ is the frozen migration."""
+def project(tmp_path: Path, demo_template: Path) -> Path:
+    """A throwaway project (no git) holding the demo player (tests/demo.py)."""
+    shutil.copytree(demo_template / "data", tmp_path / "data")
+    return tmp_path
+
+
+@pytest.fixture
+def legacy_project(tmp_path: Path, migrated: State) -> Path:
+    """A throwaway project (no git) whose data/ is the frozen legacy migration. Only for
+    behavior that exists because of that import (parity, legacy unreconciled rows)."""
     write(migrated, tmp_path / "data")
     return tmp_path
 
