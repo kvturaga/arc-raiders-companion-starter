@@ -32,6 +32,7 @@ SHIPPED = (
     "docs/strategy.md",
     "docs/raid_debrief.md",
     "AGENTS.md",
+    ".github/workflows/ci.yml",
     "LICENSE",
     "NOTICE.md",
     "pyproject.toml",

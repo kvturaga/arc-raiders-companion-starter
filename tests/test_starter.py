@@ -101,6 +101,7 @@ def test_export_writes_a_package_without_history(tmp_path: Path) -> None:
     export(PROJECT, dest, TODAY)
     assert (dest / "src" / "arc_companion" / "starter.py").exists()
     assert (dest / "docs" / "new_player_guide.md").exists()
+    assert (dest / ".github" / "workflows" / "ci.yml").exists()
     assert (dest / UPSTREAM).read_text().strip() == STARTER_REPO
     assert "MIT License" in (dest / "LICENSE").read_text()
     assert "arc_legacy" not in (dest / "pyproject.toml").read_text()
