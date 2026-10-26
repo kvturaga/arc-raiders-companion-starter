@@ -20,8 +20,9 @@ from ..model import (
     ItemInstance,
     Source,
     StackSize,
+    StashCounter,
 )
-from ..queries import resolve, slots_needed
+from ..queries import resolve, slots_needed, stash_slot_math
 from ..store import State, load, recover, save, write_lock
 
 Change = Callable[[State, Source], str]
@@ -174,3 +175,20 @@ def adjust_holding(
     stack = state.find(StackSize, item.id)
     slots = slots_needed(quantity, stack.units_per_slot) if stack else None
     state.put(dataclasses.replace(held, quantity=quantity, slots=slots, source=source))
+
+
+def check_counter(state: State, stash_used: int, source: Source) -> str:
+    """Record the counter the player read; refuse if complete records imply another number."""
+    math = stash_slot_math(state)
+    if math.complete and math.implied != stash_used:
+        raise Refused(
+            f"records imply {math.implied} stash slots, counter shows {stash_used}: "
+            "something this action changed is missing (A9); not saving"
+        )
+    counter = state.all(StashCounter)[0]
+    state.put(
+        dataclasses.replace(
+            counter, used=stash_used, confidence=Confidence.CONFIRMED, source=source
+        )
+    )
+    return f"stash {stash_used}" + ("" if math.complete else " (unverified: counts incomplete)")

@@ -9,10 +9,9 @@ its real kind, and saved on its own. Given the stash counter, the records must r
 
 from __future__ import annotations
 
-import dataclasses
 from dataclasses import dataclass
 
-from ..enums import ActionKind, Confidence, Location, MetricKind
+from ..enums import ActionKind, Location, MetricKind
 from ..model import (
     AccountMetric,
     Holding,
@@ -20,12 +19,11 @@ from ..model import (
     Item,
     ItemInstance,
     Source,
-    StashCounter,
     WeaponAttachment,
 )
-from ..queries import resolve, stash_slot_math
+from ..queries import resolve
 from ..store import State
-from .core import Change, Refused, _counted, _holding_id, adjust_holding
+from .core import Change, Refused, _counted, _holding_id, adjust_holding, check_counter
 
 STASH = Location.STASH
 
@@ -78,7 +76,7 @@ def event(
         if then is not None:
             summary.append(then(state, source))
         if reading.stash_used is not None:
-            summary.append(_check_counter(state, reading.stash_used, source))
+            summary.append(check_counter(state, reading.stash_used, source))
         if reading.coins is not None:
             state.put(AccountMetric(id=MetricKind.COINS, value=reading.coins, source=source))
             summary.append(f"coins {reading.coins}")
@@ -125,22 +123,6 @@ def _remove_pieces(state: State, item: Item, location: Location, count: int) -> 
                 state.remove(a)
                 state.remove(a.mod)
         state.remove(piece)
-
-
-def _check_counter(state: State, stash_used: int, source: Source) -> str:
-    math = stash_slot_math(state)
-    if math.complete and math.implied != stash_used:
-        raise Refused(
-            f"records imply {math.implied} stash slots, counter shows {stash_used}: "
-            "something this action changed is missing (A9); not saving"
-        )
-    counter = state.all(StashCounter)[0]
-    state.put(
-        dataclasses.replace(
-            counter, used=stash_used, confidence=Confidence.CONFIRMED, source=source
-        )
-    )
-    return f"stash {stash_used}" + ("" if math.complete else " (unverified: counts incomplete)")
 
 
 # --- the actions players report -----------------------------------------------------------------

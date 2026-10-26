@@ -1,4 +1,4 @@
-"""Tracked pieces: new items, mods on and off weapons, upgrades."""
+"""Items and tracked pieces: new items, their spoken names, mods on and off weapons, upgrades."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from ..enums import (
     WeaponType,
 )
 from ..model import (
+    Alias,
     Item,
     ItemInstance,
     ModFit,
@@ -36,6 +37,25 @@ def add_item(item_id: str, name: str, category: ItemCategory, tier: int | None) 
             raise Refused(f"item {item_id} already exists")
         state.add(Item(id=item_id, name=name, category=category, family=None, tier=tier))
         return f"add-item {item_id} ({name}, {category})"
+
+    return change
+
+
+def add_alias(item_name: str, aliases: list[str]) -> Change:
+    """Other exact names for an item, e.g. how a voice transcript hears it ("secret grenade").
+    An alias that already names a different item is refused; matching stays exact (no fuzz)."""
+
+    def change(state: State, source: Source) -> str:
+        item = resolve(state, item_name)
+        for alias in aliases:
+            try:
+                taken = resolve(state, alias)
+            except KeyError:
+                state.add(Alias(alias=alias, item=item))
+                continue
+            if taken != item:
+                raise Refused(f"{alias!r} already names {taken.id}")
+        return f"add-alias {item.id}: {', '.join(aliases)}"
 
     return change
 

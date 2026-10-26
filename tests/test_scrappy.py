@@ -7,6 +7,7 @@ import pytest
 from arc_companion import commands
 from arc_companion.enums import FeedStatus, SourceKind
 from arc_companion.model import CompanionFeed, Holding, RewardLine
+from arc_companion.queries import stash_slot_math
 from arc_companion.store import load
 
 from .conftest import apply_change
@@ -59,3 +60,9 @@ def test_only_foods_are_fed_and_the_queue_holds_six(project: Path) -> None:
         apply_change(project, commands.feed_scrappy("Metal Parts"))
     with pytest.raises(commands.Refused, match="queue holds 6"):
         apply_change(project, commands.feed_scrappy("Apricots", 7))
+
+
+def test_a_claim_with_the_wrong_counter_is_refused(project: Path) -> None:
+    wrong = stash_slot_math(load(project / "data")).implied + 3
+    with pytest.raises(commands.Refused, match="records imply"):
+        apply_change(project, commands.claim_scrappy("8s and 11", 1, [], {}, wrong))

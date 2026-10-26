@@ -20,7 +20,6 @@ from ..model import (
     RewardOrder,
     ScrappyRate,
     Source,
-    StashCounter,
 )
 from ..queries import resolve
 from ..reference import (
@@ -34,6 +33,7 @@ from .core import (
     Refused,
     _holding_id,
     adjust_holding,
+    check_counter,
 )
 
 
@@ -128,8 +128,7 @@ def claim_scrappy(
                 state.add(RewardLine(batch=batch, item=item, quantity=quantity))
                 adjust_holding(state, item, quantity, source)
         if stash_used is not None:
-            counter = state.all(StashCounter)[0]
-            state.put(dataclasses.replace(counter, used=stash_used, source=source))
+            check_counter(state, stash_used, source)
         return f"claim-scrappy {rounds} round(s): {_explain(state, scrappy, rounds, got, bonus)}"
 
     return change

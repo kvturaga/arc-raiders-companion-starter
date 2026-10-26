@@ -82,6 +82,19 @@ force. `arc expect --add ... --remove ... --sell ...` states the counter and coi
 before the player looks. `arc stocktake` is the full recount: run it from screenshots when the
 records and the counter disagree and nobody knows why.
 
+**Playing on another machine, with friends talking.** The game runs on the player's PC with
+voice chat on it; the agent listens on a separate machine and cannot see the game (there is no
+inventory API). Voice is the input; do not ask for screenshots.
+
+- **Fragments are fine, in any order.** Save each one the moment it is said and echo it back in
+  one short line ("saved: +5 Green Light Sticks, stash"), so a mishearing is caught while the
+  player still remembers. Nothing waits in the conversation.
+- **Mishearings become aliases.** When the transcript renders a name oddly ("secret grenade" for
+  Seeker Grenade), confirm once, then `arc add-alias` it so it resolves next time. Never guess.
+- **One number per break: the stash counter.** If the records reproduce it, the break is right;
+  if not, the gap is inside that break, not three raids back.
+- **Pausing costs nothing.** Every fragment is already saved, so "later" is always safe.
+
 **If the raider died**, run `arc record-death` first: every carried slot goes to zero except the
 safe pocket, and the losses are recorded. Then save the rest as above.
 

@@ -21,6 +21,7 @@ from .facts import (
     starter_update,
 )
 from .gear import (
+    add_alias,
     add_item,
     attach_mod,
     detach_mod,
@@ -57,6 +58,7 @@ __all__ = [
     "CountLine",
     "Reading",
     "Refused",
+    "add_alias",
     "add_goal",
     "add_item",
     "apply",

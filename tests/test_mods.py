@@ -16,6 +16,7 @@ from arc_companion.model import (
     WeaponAttachment,
     WeaponProfile,
 )
+from arc_companion.queries import resolve
 from arc_companion.store import State, load
 
 from .conftest import apply_change
@@ -101,3 +102,11 @@ def test_an_upgrade_keeps_the_piece_and_its_mods(project: Path) -> None:
     assert (piece.condition, piece.condition_max) == (120, 120)
     assert len(_mods_on(project, "rattler_iii")) == 3  # mods stay on the upgraded weapon
     assert after.get(Holding, "metal_parts@stash").quantity == metal - 10
+
+
+def test_a_misheard_name_becomes_an_alias_and_resolves(project: Path) -> None:
+    apply_change(project, commands.add_alias("Seeker Grenade", ["secret grenade"]))
+    state = load(project / "data")
+    assert resolve(state, "Secret Grenade").id == "seeker_grenade"
+    with pytest.raises(commands.Refused, match="already names"):
+        apply_change(project, commands.add_alias("Bandage", ["Secret Grenade"]))

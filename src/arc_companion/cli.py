@@ -464,6 +464,16 @@ def _add_item(args: argparse.Namespace) -> commands.Change:
 
 
 @writer(
+    "add-alias",
+    "other names for an item, as speech or a transcript renders them",
+    arg("item"),
+    arg("aliases", nargs="+"),
+)
+def _add_alias(args: argparse.Namespace) -> commands.Change:
+    return commands.add_alias(args.item, args.aliases)
+
+
+@writer(
     "attach-mod",
     "a mod seen on a weapon",
     arg("weapon", help="instance id, or an item with exactly one unit"),
