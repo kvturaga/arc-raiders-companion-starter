@@ -52,7 +52,8 @@ The rules, in order (code: `views.debrief`):
 5. **Scrappy food** is kept: each eaten food is +5 of a material.
 6. **Goal needs** are always kept, whatever else applies.
 7. Anything a recipe uses: keep **one full stack**, sell the rest.
-8. Nothing uses it: sell.
+8. A trinket: sell. Anything else with no recorded use is **check**, not sell: quests,
+   projects and research (studying items for points) are not all recorded. Search before selling.
 
 When the player makes a call that should stick ("always keep Hornet Drivers"), record it with
 `arc set-disposition` so the next debrief follows it without asking.

@@ -287,11 +287,17 @@ custom loadout back to the stash; it is refused if the stash is full (wiki: Load
 | Maximum 328 slots, excluding Expedition rewards and Nomadic Envoy space | **official 2.0** | [Frozen Trail 2.0](https://arcraiders.com/news/frozen-trail-2-0-update) |
 | +12 slots per completed Expedition | wiki | wiki: Stash |
 | Upgrade 232 → 256 costs **150,000** | **player** (`next_stash_expansion_cost`) | a player's in-game reading |
+| Upgrade 256 → 280 costs **300,000** | **player**, 25 Oct 2026 | the pre-2.0 guide says 200,000; my 1.5x estimate (231k) was wrong |
 | ...which conflicts with 130,000 on the wiki and GameBrief | wiki (pre-2.0 table) | [GameBrief](https://www.gamebrief.net/arc-raiders/arc-raiders-stash-size-guide-2026) |
 | Levels 11–12 cost 750,000 / 1,500,000 | player-reported elsewhere, unofficial | GameBrief |
 
-The 150k vs 130k gap is either a 2.0 price change or a misread. The in-game reading stands
-until you see otherwise.
+| Pre-2.0 table, 64 → 280 | guide | 5k, 10k, 15k, 25k, 40k, 60k, 90k, 130k, 200k per level ([allthings.how](https://allthings.how/arc-raiders-stash-size-limits-and-how-to-manage-them/)) |
+| 208 → 232 cost 100,000 | **player** recollection | the guide says 90,000 |
+
+The costs are a hand-set table, not a formula: each level is roughly 1.4–1.6x the last, then
+the two 2.0 levels jump to 750k and 1.5M. The player's readings (100k, 150k) run above the
+pre-2.0 guide (90k, 130k), consistent with a 2.0 price rise. The 256 → 280 step reads 300,000, double the last, so ratios from the old table do not
+predict 2.0 prices. Read each price on the screen; never plan against a guessed one.
 
 ### C4. Stacks and slots
 

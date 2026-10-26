@@ -71,7 +71,14 @@ src_0069,386,user_report,2026-10-25,user_report recorded by the companion's orig
 src_0070,408,user_report,2026-10-25,user_report recorded by the companion's original player
 src_0071,437,user_report,2026-10-25,user_report recorded by the companion's original player
 src_0072,438,user_report,2026-10-25,user_report recorded by the companion's original player
-starter_workshop,446,web,2026-10-23,"https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
-starter_stash,447,web,2026-10-23,https://arcraiders.wiki/wiki/Stash: 64 slots at level 1
-starter_defaults,448,user_preference,2026-10-23,Starter profile defaults; edit to taste with arc set-preference
-starter_refiner_iii,449,user_report,2026-10-23,"In-game Refiner III upgrade, read by a player on 2026-10-23: 3 Motor, 10 ARC Circuitry, 6 Bombardier Cell, and no Outpost requirement (the Workshop wiki page says it needs one)"
+src_0073,494,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0074,495,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0075,496,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0076,497,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0077,498,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0078,499,user_report,2026-10-25,user_report recorded by the companion's original player
+src_0079,500,user_report,2026-10-25,user_report recorded by the companion's original player
+starter_workshop,520,web,2026-10-23,"https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
+starter_stash,521,web,2026-10-23,https://arcraiders.wiki/wiki/Stash: 64 slots at level 1
+starter_defaults,522,user_preference,2026-10-23,Starter profile defaults; edit to taste with arc set-preference
+starter_refiner_iii,523,user_report,2026-10-23,"In-game Refiner III upgrade, read by a player on 2026-10-23: 3 Motor, 10 ARC Circuitry, 6 Bombardier Cell, and no Outpost requirement (the Workshop wiki page says it needs one)"

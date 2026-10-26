@@ -46,13 +46,12 @@ pays a reward. When an item is only waiting for a project, commit it as soon as 
 Coins are the scoreboard, and coins on hand are options: an Envoy trade, a repair, a bargain, a
 string of deaths. Free cash beats a purchase you do not need yet.
 
-- Keep a **cash floor** (the `stash_high_cash_threshold` preference). Reaching it makes a big
-  purchase *available*; it does not make it due.
-- Buy a stash expansion when the **space is needed**: free slots fall into the reserve band
+- Buy a stash expansion when coins cover **its price plus a cushion** of 20–30k (the
+  `stash_expansion_cushion` preference): 150,000 + 30,000 = 180,000 for 232 → 256. The cushion
+  is above the *price*, not a permanent floor stacked on top of it.
+- Buy when the **space is needed**: free slots fall into the reserve band
   (`stash_emergency_reserve_slots`), not merely because coins cover the price.
-- A purchase must leave coins **at or above the floor**: buying needs the price plus the floor in
-  hand (a 150,000 expansion on a 180,000 floor needs 330,000). Then set the next target the same
-  way.
+- Then set the next target the same way: the next price, read on the screen, plus the cushion.
 - Record the next price when the screen shows it; never plan against a guessed price.
 
 ## 7. Death is planned for

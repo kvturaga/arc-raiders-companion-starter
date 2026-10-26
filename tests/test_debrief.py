@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from arc_companion import commands
-from arc_companion.enums import DispositionAction, SourceKind
+from arc_companion.enums import DispositionAction, ItemCategory, SourceKind
 from arc_companion.model import Holding, Objective
 from arc_companion.packets import DebriefRow
 from arc_companion.queries import resolve
@@ -67,3 +67,13 @@ def test_an_item_a_quest_objective_uses_is_kept(legacy_project: Path) -> None:
     row = debrief(state, {quest_items[0]: 1})[0]
     assert row["decision"] == "keep"
     assert str(row["why"]).startswith("quest ")
+
+
+def test_an_item_with_no_recorded_use_is_checked_not_sold(project: Path) -> None:
+    apply_change(project, commands.add_item("odd_part", "Odd Part", ItemCategory.RECYCLABLE, None))
+    apply_change(project, commands.add_item("odd_toy", "Odd Toy", ItemCategory.TRINKET, None))
+    state = load(project / "data")
+    haul = {resolve(state, "Odd Part"): 2, resolve(state, "Odd Toy"): 1}
+    rows = {r["item"]: r for r in debrief(state, haul)}
+    assert rows["Odd Part"]["decision"].startswith("check ")
+    assert rows["Odd Toy"]["decision"].startswith("sell ")

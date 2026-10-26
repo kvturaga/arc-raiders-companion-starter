@@ -92,7 +92,8 @@ class PreferenceKey(StrEnum):
     MEDIUM_AMMO_EXTRACTION_RESERVE = "medium_ammo_extraction_reserve"
     STASH_EMERGENCY_RESERVE_SLOTS = "stash_emergency_reserve_slots"
     STASH_COMFORT_USED = "stash_comfort_used"
-    STASH_HIGH_CASH_THRESHOLD = "stash_high_cash_threshold"
+    STASH_HIGH_CASH_THRESHOLD = "stash_high_cash_threshold"  # legacy: price + cushion, derived
+    STASH_EXPANSION_CUSHION = "stash_expansion_cushion"  # coins above an expansion's price
     USE_FULL_CORE_ITEM_NAMES = "use_full_core_item_names"
 
 

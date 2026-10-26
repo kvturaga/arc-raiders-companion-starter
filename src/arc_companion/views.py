@@ -294,11 +294,17 @@ def debrief(state: State, haul: dict[Item, int]) -> list[DebriefRow]:
             keep, why = need, "goals need it"
         elif one_stack:
             keep, why = max(need, one_stack), f"one stack; {uses[item.id]} recipes use it"
+        elif item.category is ItemCategory.TRINKET:
+            keep, why = 0, "a trinket: it only sells"
         else:
-            keep, why = 0, "no goal or recipe uses it"
+            # Unknown use is not no use (A2): quests, projects and research are not all
+            # recorded, so the player checks before it goes.
+            keep, why = 0, "no recorded use; check quests, projects and research before selling"
         keep = min(after, max(keep, need))
         surplus = max(0, after - keep)
         move = rule.action.value if rule and rule.action is not DispositionAction.HOLD else "sell"
+        if why.startswith("no recorded use"):
+            move = "check"
         slots_after = slots_needed(after, stack.units_per_slot) if stack and after else None
         slots_kept = slots_needed(keep, stack.units_per_slot) if stack and keep else 0
         rows.append(
