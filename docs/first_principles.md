@@ -32,8 +32,9 @@ it. Closing a row needs a count for every location it claims; a slot is never as
 **A5. Three independent measurements must agree.** The stash slot counter (e.g. `212/232`), the
 item counts, and the coins are each read off the game separately. With stack sizes known, counts
 imply the slots (`slot_math`, merged stacks), and sales imply the coins. A stocktake refuses
-unless counts reproduce the counter exactly; `arc predict` states both before the player reads
-them. Agreement proves nothing was skipped; disagreement is A9.
+unless counts reproduce the counter exactly. Each action is saved as it is reported (`arc loot`,
+`sell`, `craft`, `move`, ...) and checked against the counter on the spot, so a missing input is
+caught where it happened. `arc expect` states both before the player reads them. Agreement proves nothing was skipped; disagreement is A9.
 
 **A6. Four layers that never leak into each other.**
 
@@ -214,7 +215,7 @@ after = before + loot + crafted + rewards + bought − sold − recycled − cra
         − consumed − lost_on_death − contributed
 ```
 
-Checked two ways. **Before saving**, `arc predict` applies a raid's changes to the records and
+Checked two ways. **Before saving**, `arc expect` applies a raid's changes to the records and
 states the stash counter and coins the player should see; `stocktake --carry` saves only if the
 counter matches. **Per item**, every stocktake that counts the stash records the reported
 changes as `inventory_actions` (`loot`, `sell`, `used`) and compares each item's live total
@@ -407,6 +408,8 @@ differs.
 | Anvil II repair: 2 Heavy Gun Parts + 2 Advanced Mechanical Components | **player**, 23 Oct 2026 | outranks the dataset's pre-2.0 3 Mechanical + 3 Simple Gun Parts |
 | Anvil II to III: 1 Advanced Mechanical Component + 1 Heavy Gun Part; +10 max durability, fire rate bonus 25% to 50%, dispersion recovery 6.25% to 12.5% | **player**, 23 Oct 2026 | matches wiki: Anvil (post-2.0) |
 | Light Shield repair: 4 Plastic Parts (from 79 and from 60) | **player**, 23 Oct 2026 | |
+| Anvil III repair: 3 Heavy Gun Parts + 2 Advanced Mechanical Components (69/120 to full) | **player**, 25 Oct 2026 | one Heavy Gun Part more than Anvil II |
+| Light Shield repair from 15/100 needed two repairs (8 Plastic Parts); from 81/100, one | **player**, 25 Oct 2026 | |
 | Upgrading a weapon fully restores its durability (Anvil II 91/110 became Anvil III 120/120) | **player**, 23 Oct 2026 | an upgrade doubles as a repair |
 | Loadout weight capacity with Looting Mk. 2: 60 (unit not shown on screen) | **player**, 23 Oct 2026 | wiki: Augments lists weight 60 |
 

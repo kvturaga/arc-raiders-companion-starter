@@ -57,24 +57,33 @@ The rules, in order (code: `views.debrief`):
 When the player makes a call that should stick ("always keep Hornet Drivers"), record it with
 `arc set-disposition` so the next debrief follows it without asking.
 
-## 3. Predict, then save
+## 3. Save each action as the player reports it
 
-1. `arc predict --add <haul unloaded> --remove <sold, recycled, used, moved out> --sell <sold>`
-   states the stash counter and coins the player should now see, and which items spill into or
-   free a stack. Tell the player; they read the real numbers.
-2. If both match, save in one checked step: `arc stocktake loadout.csv --carry --add ... --remove
-   ... --sell ... --stash-used <counter>`. The changes are recorded as events; any item
-   whose count still disagrees is reported as a residual. `loadout.csv` lists the carried slots
-   (with durability in the `condition` column); the stash is the records plus the changes. It refuses unless the stash
-   reproduces the counter.
-3. If they do not match, an input is missing (A9): ask before saving. Never force the numbers.
-4. Then: `arc claim-scrappy "8s and 11" --stash-used <counter>` (and `--ate` for eaten food),
-   `arc set-metric coins <n>`, `arc attach-mod` / `detach-mod` / `upgrade` for gear changes,
-   `arc contribute <goal> <item> <n> [--from raid]` for project hand-ins, and `arc set-disposition`
-   or `arc add-goal` for calls the player wants to keep.
+Information arrives as a stream: the haul, then a sale, a craft, a move, a reward, a repair.
+Save each one when it is said, in its own command, never batched for later. Pass the counter
+whenever the player reads it (`--stash-used`, and `--coins` after a sale): the records must
+reproduce it, so a missing input is caught on the action that caused it.
+
+| The player says | Command |
+| --- | --- |
+| unloaded the haul, got a reward, bought | `arc loot "Metal Parts=30" ...` |
+| used meds or ammo in the raid | `arc use "Herbal Bandage=2" --from backpack` |
+| sold | `arc sell "Toaster=1" ... --coins <n>` |
+| crafted | `arc craft "Heavy Ammo=30" --using "Chemicals=6" "Metal Parts=9" --into backpack` |
+| recycled | `arc recycle "Mini Centrifuge=1" --into "Advanced Mechanical Components=1" "Canister=2"` |
+| moved items | `arc move "Herbal Bandage=2" --from stash --to backpack` |
+| traded with an Envoy | `arc trade --give "Bobcat I=1" ... --get "Anvil II=1"` |
+| repaired | `arc repair "Light Shield" 100/100 --using "Plastic Parts=4"` |
+| Scrappy | `arc claim-scrappy "8s and 11"` |
+| mods, upgrades, hand-ins | `arc attach-mod` / `detach-mod` / `upgrade` / `contribute` |
+
+Every one takes `--stash-used <counter>`. If it refuses, an input is missing (A9): ask, never
+force. `arc expect --add ... --remove ... --sell ...` states the counter and coins to expect
+before the player looks. `arc stocktake` is the full recount: run it from screenshots when the
+records and the counter disagree and nobody knows why.
 
 **If the raider died**, run `arc record-death` first: every carried slot goes to zero except the
-safe pocket, and the losses are recorded. Then predict and save as above, with no haul.
+safe pocket, and the losses are recorded. Then save the rest as above.
 
 **If a write was wrong** (a misheard number, the wrong item), `arc undo --note "<why>"` reverts the
 last data write as a commit of its own. It undoes one step; correct anything older with a setter.

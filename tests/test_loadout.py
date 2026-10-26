@@ -9,7 +9,7 @@ from arc_companion.enums import Location, SourceKind
 from arc_companion.model import PlayerBuild, StashCounter
 from arc_companion.queries import resolve
 from arc_companion.store import load
-from arc_companion.views import predict
+from arc_companion.views import expected
 
 from .conftest import apply_change
 
@@ -42,15 +42,15 @@ def test_the_safe_pocket_cannot_hold_more_than_the_augment_allows(project: Path)
         apply_change(project, commands.set_count("Zipline", Location.SAFE_POCKET, 1, slots=1))
 
 
-def test_predict_adds_slots_only_when_a_stack_spills(project: Path) -> None:
+def test_expected_counter_adds_slots_only_when_a_stack_spills(project: Path) -> None:
     apply_change(project, commands.set_stack_sizes({"Metal Parts": 50}))
     apply_change(project, commands.set_count("Metal Parts", Location.STASH, 340, slots=7))
     state = load(project / "data")
     metal = resolve(state, "Metal Parts")
     counter = state.all(StashCounter)[0].used
-    assert predict(state, {metal: 10}, {}, {})["counter_predicted"] == counter
-    spilled = predict(state, {metal: 11}, {}, {})
-    assert spilled["counter_predicted"] == counter + 1
+    assert expected(state, {metal: 10}, {}, {})["counter_expected"] == counter
+    spilled = expected(state, {metal: 11}, {}, {})
+    assert spilled["counter_expected"] == counter + 1
     assert spilled["slot_changes"] == [
         {"item": "Metal Parts", "before": 340, "after": 351, "slots": 1}
     ]

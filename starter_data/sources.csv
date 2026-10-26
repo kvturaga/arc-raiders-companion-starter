@@ -63,11 +63,11 @@ src_0061,285,web_reference,2026-10-23,"RaidTheory/arcraiders-data@2a4abebb (2026
 src_0062,297,web,2026-10-23,https://arcraiders.wiki/wiki/Scrappy (modified 2026-10-12): per-round rewards for levels 1-5 by minutes in round and extraction; level 4 values marked accurate as of Update 1.31.0.
 src_0063,298,web_reference,2026-10-23,"RaidTheory/arcraiders-data@2a4abebb (pre Frozen Trail 2.0): sale values and recipes where none is recorded, for raid debriefs. Player readings and wiki rows already recorded win."
 src_0064,325,user_report,2026-10-23,user_report recorded by the companion's original player
-src_0065,328,user_report,2026-10-23,user_report recorded by the companion's original player
-src_0066,331,user_report,2026-10-23,user_report recorded by the companion's original player
-src_0067,352,user_report,2026-10-23,user_report recorded by the companion's original player
-src_0068,362,web,2026-10-23,"https://arcraiders.wiki/wiki/Augments (C2 table; 2.0 notes list no slot changes). Looting Mk. 2 confirmed in game 2026-10-23: 22 backpack, 4 quick use, 2 safe pocket, weight 60."
-starter_workshop,363,web,2026-10-23,"https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
-starter_stash,364,web,2026-10-23,https://arcraiders.wiki/wiki/Stash: 64 slots at level 1
-starter_defaults,365,user_preference,2026-10-23,Starter profile defaults; edit to taste with arc set-preference
-starter_refiner_iii,366,user_report,2026-10-23,"In-game Refiner III upgrade, read by a player on 2026-10-23: 3 Motor, 10 ARC Circuitry, 6 Bombardier Cell, and no Outpost requirement (the Workshop wiki page says it needs one)"
+src_0065,331,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0066,352,user_report,2026-10-23,user_report recorded by the companion's original player
+src_0067,362,web,2026-10-23,"https://arcraiders.wiki/wiki/Augments (C2 table; 2.0 notes list no slot changes). Looting Mk. 2 confirmed in game 2026-10-23: 22 backpack, 4 quick use, 2 safe pocket, weight 60."
+src_0068,383,user_report,2026-10-25,user_report recorded by the companion's original player
+starter_workshop,386,web,2026-10-23,"https://arcraiders.wiki/wiki/Workshop (edited 2026-10-10, after Frozen Trail 2.0)"
+starter_stash,387,web,2026-10-23,https://arcraiders.wiki/wiki/Stash: 64 slots at level 1
+starter_defaults,388,user_preference,2026-10-23,Starter profile defaults; edit to taste with arc set-preference
+starter_refiner_iii,389,user_report,2026-10-23,"In-game Refiner III upgrade, read by a player on 2026-10-23: 3 Motor, 10 ARC Circuitry, 6 Bombardier Cell, and no Outpost requirement (the Workshop wiki page says it needs one)"

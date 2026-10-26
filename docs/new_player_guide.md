@@ -103,6 +103,15 @@ it records what was lost so your counts stay right.
 - [ ] Ammo, healing and shield chargers in quick use.
 - [ ] Tell the agent what you are taking and what you are hunting.
 
+**In the fight** (lessons from play)
+
+- [ ] Use your grenades and smoke. In the moment it is easy to keep shooting and forget them; a
+      Seeker or a smoke wall often turns a fight you are losing.
+- [ ] A Raider Hatch Key is an exit that needs no extraction point. Keep a couple in the stash
+      and carry one into hot areas.
+- [ ] Try the circular crosshair: it shows the bloom, so you see where a shot can land and can
+      time shots to the recoil.
+
 **After a raid**: say **"raid complete"** and the agent walks you through
 [the debrief](raid_debrief.md):
 

@@ -169,12 +169,12 @@ class SlotChange(TypedDict):
     slots: int
 
 
-class Prediction(TypedDict):
+class Expected(TypedDict):
     counter_now: int
-    counter_predicted: int
+    counter_expected: int
     slot_changes: list[SlotChange]
     coins_now: int | None
-    coins_predicted: int | None
+    coins_expected: int | None
     sale_prices: str
     unpriced_sales: list[str]
     unknown: list[str]

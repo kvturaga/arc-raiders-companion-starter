@@ -127,6 +127,8 @@ class ActionKind(StrEnum):
     LOOT = "loot"  # came into the stash: unloaded from a raid, claimed, bought
     USED = "used"  # left the stash otherwise: consumed, recycled, crafted in, moved out
     RESIDUAL = "residual"  # a live count differed from records plus events (A9); signed
+    MOVE = "move"  # between locations; signed, nets to zero across them
+    TRADE = "trade"  # an Envoy or trader swap; signed
     SELL = "sell"
     RECYCLE = "recycle"
     RECYCLE_OUTPUT = "recycle_output"

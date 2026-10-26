@@ -139,7 +139,12 @@ def _condition(raw: str | None) -> tuple[int, int] | None:
 
 
 def _items(state: State, pairs: list[tuple[str, int]]) -> dict[Item, int]:
-    return {resolve(state, name): quantity for name, quantity in pairs}
+    """Quantities per item; an item named twice (learned one, sold one) adds up."""
+    totals: dict[Item, int] = {}
+    for name, quantity in pairs:
+        item = resolve(state, name)
+        totals[item] = totals.get(item, 0) + quantity
+    return totals
 
 
 def _actor() -> str:
@@ -208,15 +213,15 @@ def _goal(state: State, args: argparse.Namespace) -> Any:
 
 
 @reader(
-    "predict",
+    "expect",
     "expected stash counter and coins after a raid's changes",
     _pairs("--add"),
     _pairs("--remove"),
     _pairs("--sell"),
 )
-def _predict(state: State, args: argparse.Namespace) -> Any:
+def _expect(state: State, args: argparse.Namespace) -> Any:
     add, remove, sell = (_items(state, getattr(args, k)) for k in ("add", "remove", "sell"))
-    return views.predict(state, add, remove, sell)
+    return views.expected(state, add, remove, sell)
 
 
 @action(
@@ -337,6 +342,92 @@ def _stocktake(args: argparse.Namespace) -> commands.Change:
 )
 def _set_condition(args: argparse.Namespace) -> commands.Change:
     return commands.set_condition(args.instance, args.current, args.maximum)
+
+
+# --- writes: one action as it happens (commands/events.py) ------------------------------------
+
+_HELD = arg("items", nargs="+", type=_stack_pair, metavar="ITEM=QTY")
+_READING: tuple[Arg, ...] = (
+    arg("--stash-used", type=int, help="the counter after the action; checked against records"),
+    arg("--coins", type=int, help="coins after the action, as read"),
+)
+
+
+def _reading(a: argparse.Namespace) -> commands.Reading:
+    return commands.Reading(stash_used=a.stash_used, coins=a.coins)
+
+
+def _at(flag: str, default: Location) -> Arg:
+    return arg(flag, type=_location, default=default)
+
+
+@writer(
+    "move",
+    "items moved between places",
+    _HELD,
+    _at("--from", Location.STASH),
+    arg("--to", type=_location, required=True),
+    *_READING,
+)
+def _move(a: argparse.Namespace) -> commands.Change:
+    return commands.move(a.items, getattr(a, "from"), a.to, _reading(a))
+
+
+@writer(
+    "craft",
+    "made at a bench from stash inputs",
+    _HELD,
+    _pairs("--using"),
+    _at("--into", Location.STASH),
+    *_READING,
+)
+def _craft(a: argparse.Namespace) -> commands.Change:
+    return commands.craft(a.items, a.using, a.into, _reading(a))
+
+
+@writer("recycle", "broken down into parts", _HELD, _pairs("--into"), *_READING)
+def _recycle(a: argparse.Namespace) -> commands.Change:
+    return commands.recycle(a.items, a.into, _reading(a))
+
+
+@writer("sell", "sold for coins", _HELD, _at("--from", Location.STASH), *_READING)
+def _sell(a: argparse.Namespace) -> commands.Change:
+    return commands.sell(a.items, getattr(a, "from"), _reading(a))
+
+
+@writer(
+    "loot",
+    "came in: raid unload, reward, purchase",
+    _HELD,
+    _at("--into", Location.STASH),
+    *_READING,
+)
+def _loot(a: argparse.Namespace) -> commands.Change:
+    return commands.loot(a.items, a.into, _reading(a))
+
+
+@writer("use", "consumed: meds, ammo, keys", _HELD, _at("--from", Location.BACKPACK), *_READING)
+def _use(a: argparse.Namespace) -> commands.Change:
+    return commands.use(a.items, getattr(a, "from"), _reading(a))
+
+
+@writer("trade", "an Envoy or trader swap", _pairs("--give"), _pairs("--get"), *_READING)
+def _trade(a: argparse.Namespace) -> commands.Change:
+    return commands.trade(a.give, a.get, _reading(a))
+
+
+@writer(
+    "repair",
+    "a repair: its cost and the new durability",
+    arg("piece"),
+    arg("condition", type=_condition, metavar="CUR/MAX"),
+    _pairs("--using"),
+    *_READING,
+)
+def _repair(a: argparse.Namespace) -> commands.Change:
+    current, maximum = a.condition
+    condition = commands.set_condition(a.piece, current, maximum)
+    return commands.repair(a.using, condition, _reading(a))
 
 
 @writer(

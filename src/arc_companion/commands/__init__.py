@@ -12,6 +12,7 @@ from .core import (
     data_dir,
     undo,
 )
+from .events import Reading, craft, loot, move, recycle, repair, sell, trade, use
 from .facts import (
     import_augment_capacities,
     import_reference,
@@ -54,6 +55,7 @@ from .stocktake import CountLine, carried_stash, parse_stacks, record_death, sto
 __all__ = [
     "Change",
     "CountLine",
+    "Reading",
     "Refused",
     "add_goal",
     "add_item",
@@ -62,17 +64,23 @@ __all__ = [
     "carried_stash",
     "claim_scrappy",
     "contribute",
+    "craft",
     "data_dir",
     "detach_mod",
     "feed_scrappy",
     "import_augment_capacities",
     "import_reference",
     "import_scrappy_rates",
+    "loot",
+    "move",
     "parse_scrappy",
     "parse_stacks",
     "reconcile",
     "record_death",
+    "recycle",
+    "repair",
     "resolve_question",
+    "sell",
     "set_build",
     "set_condition",
     "set_count",
@@ -87,6 +95,8 @@ __all__ = [
     "set_stash",
     "starter_update",
     "stocktake",
+    "trade",
     "undo",
     "upgrade_piece",
+    "use",
 ]

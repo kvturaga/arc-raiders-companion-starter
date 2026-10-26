@@ -33,7 +33,7 @@ def _baseline(capsys: pytest.CaptureFixture[str], project: Path, loadout: Path) 
     return slots
 
 
-def test_predict_then_save_a_raid_then_claim_scrappy(
+def test_expect_then_save_a_raid_then_claim_scrappy(
     capsys: pytest.CaptureFixture[str], project: Path, tmp_path: Path
 ) -> None:
     loadout = tmp_path / "loadout.csv"
@@ -42,10 +42,10 @@ def test_predict_then_save_a_raid_then_claim_scrappy(
     metal = load(project / "data").get(Holding, "metal_parts@stash").quantity or 0
     spill = (50 - metal % 50) % 50 + 1  # one more than fills the last stack: a new stack
 
-    # 1. Predict what the screen should show after unloading the haul.
-    predicted = _arc(capsys, project, "predict", "--add", f"Metal Parts={spill}")
-    assert predicted["counter_predicted"] == counter + 1
-    assert predicted["slot_changes"][0]["item"] == "Metal Parts"
+    # 1. What the screen should show after unloading the haul.
+    expected = _arc(capsys, project, "expect", "--add", f"Metal Parts={spill}")
+    assert expected["counter_expected"] == counter + 1
+    assert expected["slot_changes"][0]["item"] == "Metal Parts"
 
     # 2. A wrong counter reading is refused; nothing is written.
     with pytest.raises(SystemExit) as refused:
@@ -56,10 +56,10 @@ def test_predict_then_save_a_raid_then_claim_scrappy(
     capsys.readouterr()
     assert load(project / "data").get(Holding, "metal_parts@stash").quantity == metal
 
-    # 3. The predicted counter saves.
+    # 3. The expected counter saves.
     saved = _write(capsys, project, "stocktake", str(loadout), "--carry",
                    "--add", f"Metal Parts={spill}", "--stash-used",
-                   str(predicted["counter_predicted"]))  # fmt: skip
+                   str(expected["counter_expected"]))  # fmt: skip
     assert "stocktake stash" in saved["applied"]
     state = load(project / "data")
     assert state.get(Holding, "metal_parts@stash").quantity == metal + spill

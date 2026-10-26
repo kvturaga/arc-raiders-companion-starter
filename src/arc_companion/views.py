@@ -38,10 +38,10 @@ from .packets import (
     Bootstrap,
     CountCheckRow,
     DebriefRow,
+    Expected,
     GoalLine,
     ItemPacket,
     LoadoutRow,
-    Prediction,
     SlotChange,
 )
 from .queries import (
@@ -333,9 +333,9 @@ def debrief_markdown(rows: list[DebriefRow]) -> str:
     return "\n".join(lines)
 
 
-def predict(
+def expected(
     state: State, add: dict[Item, int], remove: dict[Item, int], sell: dict[Item, int]
-) -> Prediction:
+) -> Expected:
     """What the stash counter and coins should read after a raid's unload, sales and moves.
 
     Conservation as a check: before + changes = after. The player reads the real counter and
@@ -376,10 +376,10 @@ def predict(
             earned += value.coins * quantity
     return {
         "counter_now": counter,
-        "counter_predicted": counter + slot_delta,
+        "counter_expected": counter + slot_delta,
         "slot_changes": sorted(rows, key=lambda r: r["item"]),
         "coins_now": coins,
-        "coins_predicted": None if coins is None else coins + earned,
+        "coins_expected": None if coins is None else coins + earned,
         "sale_prices": "recorded item values; worn gear sells for less",
         "unpriced_sales": unpriced,
         "unknown": unknown,
