@@ -6,11 +6,13 @@ import dataclasses
 
 from ..enums import (
     ItemCategory,
+    Location,
     ModSlot,
     WeaponType,
 )
 from ..model import (
     Alias,
+    Holding,
     Item,
     ItemInstance,
     ModFit,
@@ -23,6 +25,7 @@ from ..store import State
 from .core import (
     Change,
     Refused,
+    _holding_id,
     _one_piece,
     _piece_from_stock,
     adjust_holding,
@@ -66,7 +69,8 @@ def attach_mod(
     """Record a mod seen on a weapon. The observation is also the source for the fit.
 
     The weapon may be an instance id or an item with exactly one unit. The mod is taken from
-    a free piece or stack where the weapon is; if none, it is new to the records.
+    a free piece or stack where the weapon is, else from the stash (fitting a mod to a carried
+    gun takes it from there); only if neither has one is it new to the records.
     """
 
     def change(state: State, source: Source) -> str:
@@ -80,12 +84,7 @@ def attach_mod(
         for a in state.all(WeaponAttachment):
             if a.weapon.id == gun.id and a.slot is slot:
                 raise Refused(f"{gun.id} {slot} already holds {a.mod.item.id}")
-        free = [
-            i
-            for i in state.all(ItemInstance)
-            if i.item == mod_item and i.location is gun.location and i.id not in attached
-        ]
-        piece = free[0] if free else _piece_from_stock(state, mod_item, gun.location, source)
+        piece = _free_mod(state, mod_item, gun.location, attached, source)
         fit = state.find(ModFit, (mod_item.id, gun.item.id))
         if fit is None:
             state.add(ModFit(mod=mod_item, weapon=gun.item, slot=slot, source=source))
@@ -95,6 +94,28 @@ def attach_mod(
         return f"attach-mod {mod_item.id} -> {gun.id} ({slot})"
 
     return change
+
+
+def _free_mod(
+    state: State, item: Item, at: Location, attached: set[str], source: Source
+) -> ItemInstance:
+    for place in dict.fromkeys((at, Location.STASH)):
+        loose = [
+            i
+            for i in state.all(ItemInstance)
+            if i.item == item and i.location is place and i.id not in attached
+        ]
+        held = state.find(Holding, _holding_id(item, place))
+        if loose:
+            piece = loose[0]
+        elif held is not None and held.quantity:
+            piece = _piece_from_stock(state, item, place, source)
+        else:
+            continue
+        moved = dataclasses.replace(piece, location=at)
+        state.put(moved)
+        return moved
+    return _piece_from_stock(state, item, at, source)
 
 
 def detach_mod(weapon: str, slot: ModSlot) -> Change:

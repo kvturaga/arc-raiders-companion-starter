@@ -9,6 +9,7 @@ its real kind, and saved on its own. Given the stash counter, the records must r
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 
 from ..enums import ActionKind, Location, MetricKind
@@ -75,19 +76,25 @@ def event(
         summary = [f"{verb}: {', '.join(lines)}"]
         if then is not None:
             summary.append(then(state, source))
-        if reading.stash_used is not None:
-            summary.append(check_counter(state, reading.stash_used, source))
-        if reading.coins is not None:
-            state.put(AccountMetric(id=MetricKind.COINS, value=reading.coins, source=source))
-            summary.append(f"coins {reading.coins}")
+        summary += _record_reading(state, reading, source)
         return "; ".join(summary)
 
     return change
 
 
+def _record_reading(state: State, reading: Reading, source: Source) -> list[str]:
+    lines = []
+    if reading.stash_used is not None:
+        lines.append(check_counter(state, reading.stash_used, source))
+    if reading.coins is not None:
+        state.put(AccountMetric(id=MetricKind.COINS, value=reading.coins, source=source))
+        lines.append(f"coins {reading.coins}")
+    return lines
+
+
 def _apply(state: State, item: Item, d: Delta, source: Source) -> None:
     """Counted stacks first; a unit leaving with no stack left is a tracked piece, which goes
-    with its mods (a move refuses instead: the piece keeps its identity, A11). An item arriving
+    with its mods. An item arriving
     where it was never recorded starts from zero: the place is counted, so absence was a zero."""
     location, quantity = d.location, d.quantity
     held = state.find(Holding, _holding_id(item, location))
@@ -97,8 +104,6 @@ def _apply(state: State, item: Item, d: Delta, source: Source) -> None:
     if quantity < 0:
         on_hand = held.quantity if held is not None and held.quantity is not None else 0
         from_stack = max(quantity, -on_hand)
-        if from_stack != quantity and d.kind is ActionKind.MOVE:
-            raise Refused(f"{item.id} is a tracked piece; record its move with a stocktake")
         _remove_pieces(state, item, location, from_stack - quantity)
     if from_stack:
         adjust_holding(state, item, from_stack, source, location)
@@ -131,8 +136,46 @@ Pairs = list[tuple[str, int]]
 
 
 def move(pairs: Pairs, origin: Location, dest: Location, reading: Reading = NO_READING) -> Change:
-    deltas = [d for name, q in pairs for d in _pair(ActionKind.MOVE, name, origin, dest, q)]
-    return event("move", deltas, reading)
+    """Units from a counted stack move as deltas; a tracked piece (a weapon, a shield) moves
+    itself, with its mods, durability and history (A11)."""
+
+    def change(state: State, source: Source) -> str:
+        stacked: Pairs = []
+        pieces: list[str] = []
+        for name, quantity in pairs:
+            item = resolve(state, name)
+            held = state.find(Holding, _holding_id(item, origin))
+            from_stack = min(quantity, (held.quantity or 0) if held else 0)
+            if from_stack:
+                stacked.append((name, from_stack))
+            if quantity > from_stack:
+                pieces += _relocate(state, item, origin, dest, quantity - from_stack)
+        summary = []
+        if stacked:
+            deltas = [d for n, q in stacked for d in _pair(ActionKind.MOVE, n, origin, dest, q)]
+            summary.append(event("move", deltas)(state, source))
+        if pieces:
+            summary.append(f"move: {', '.join(pieces)} {origin} -> {dest}")
+        return "; ".join(summary + _record_reading(state, reading, source))
+
+    return change
+
+
+def _relocate(state: State, item: Item, origin: Location, dest: Location, count: int) -> list[str]:
+    attached = {a.mod.id: a for a in state.all(WeaponAttachment)}
+    loose = [
+        i
+        for i in state.all(ItemInstance)
+        if i.item == item and i.location is origin and i.id not in attached
+    ]
+    if len(loose) != count:
+        raise Refused(f"{item.id}: {len(loose)} tracked at {origin}, moving {count}; name one")
+    for piece in loose:
+        state.put(dataclasses.replace(piece, location=dest))
+        for a in attached.values():
+            if a.weapon.id == piece.id:
+                state.put(dataclasses.replace(a.mod, location=dest))
+    return [piece.item.id for piece in loose]
 
 
 def craft(

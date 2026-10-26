@@ -110,3 +110,14 @@ def test_a_misheard_name_becomes_an_alias_and_resolves(project: Path) -> None:
     assert resolve(state, "Secret Grenade").id == "seeker_grenade"
     with pytest.raises(commands.Refused, match="already names"):
         apply_change(project, commands.add_alias("Bandage", ["Secret Grenade"]))
+
+
+def test_a_mod_fitted_to_a_carried_gun_comes_from_the_stash(project: Path) -> None:
+    apply_change(project, commands.detach_mod("Rattler II", ModSlot.MUZZLE))  # a loose Silencer I
+    loose = _piece(load(project / "data"), "silencer_i")
+    apply_change(project, commands.move([("Silencer I", 1)], Location.EQUIPMENT, Location.STASH))
+    apply_change(project, commands.attach_mod("Rattler II", "Silencer I", ModSlot.MUZZLE))
+    state = load(project / "data")
+    silencers = [i for i in state.all(ItemInstance) if i.item.id == "silencer_i"]
+    assert [i.id for i in silencers] == [loose.id]  # the stash piece, not a new copy
+    assert silencers[0].location is Location.EQUIPMENT

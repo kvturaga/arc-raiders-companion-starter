@@ -50,13 +50,22 @@ def test_the_counter_is_checked_on_the_action_that_changes_it(project: Path) -> 
     assert _qty(project, "wires") == 0
 
 
-def test_a_move_nets_to_zero_and_a_tracked_piece_cannot_move_this_way(project: Path) -> None:
+def test_a_move_nets_to_zero_and_a_piece_moves_with_its_mods(project: Path) -> None:
     apply_change(project, commands.move([("Light Ammo", 20)], STASH, BACKPACK))
     assert (_qty(project, "light_ammo"), _qty(project, "light_ammo", BACKPACK)) == (100, 20)
     moves = [a.quantity for a in load(project / "data").all(InventoryAction)]
     assert sum(moves) == 0
-    with pytest.raises(commands.Refused, match="tracked piece"):
-        apply_change(project, commands.move([("Renegade I", 1)], STASH, BACKPACK))
+    rattler_before = next(
+        i for i in load(project / "data").all(ItemInstance) if i.item.id == "rattler_ii"
+    )
+    apply_change(project, commands.move([("Rattler II", 1)], Location.EQUIPMENT, STASH))
+    state = load(project / "data")
+    rattler = state.get(ItemInstance, rattler_before.id)  # the same piece, not a new count
+    assert (rattler.location, rattler.condition) == (STASH, rattler_before.condition)
+    silencer = next(i for i in state.all(ItemInstance) if i.item.id == "silencer_i")
+    assert silencer.location is STASH  # its mods go with it
+    with pytest.raises(commands.Refused, match="tracked at"):
+        apply_change(project, commands.move([("Rattler II", 1)], Location.EQUIPMENT, STASH))
 
 
 def test_a_trade_gives_a_piece_away_with_its_mods(project: Path) -> None:
